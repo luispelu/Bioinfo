@@ -1,0 +1,137 @@
+    1  pwd
+    2  sudo apt update
+    3  sudo apt install git build-essential autoconf automake libtool python3 r-base
+    4  ls
+    5  ls -1
+    6  cd ..
+    7  ls
+    8  cd luispelu/
+    9  cd Documentos/
+   10  mkdir Notas
+   11  ls -1
+   12  cd ..
+   13  cd Documentos/
+   14  cd Notas
+   15  cd..
+   16  cd ..
+   17  mkdir Trabajos
+   18  cd Notas/
+   19  ls -1
+   20  cd N
+   21  mkdir Doc
+   22  mkdir Data
+   23  mkdir Results
+   24  ls -1
+   25  cd Results/
+   26  mkdir 2021-01-29
+   27  cd ..
+   28  mkdir README
+   29  ls -1
+   30  rm -r README
+   31  ls -1
+   32  cd Results/
+   33  cd 2021-01-29/
+   34  mv 2021-01-29 2026-01-29
+   35  cd ..
+   36  mv 2021-01-29 2026-01-29
+   37  cd 2026-01-29/
+   38  ls -1 /mnt/c/Users/luisp/Downloads/guio-es
+   39  ls -1 /mnt/c/Users/luisp/Downloads/guio-es.Qmd
+   40  ls -1
+   41  ls -1 /mnt/c/Users/luisp/Downloads
+   42  cd ..
+   43  touch README.md
+   44  R
+   45  cd Results/
+   46  cd 2026-01-29/
+   47  cp /mnt/c/Users/luisp//Downloads/guio-es.Qmd /home/luispelu/Documentos/Notas/Results/2026-01-29/
+   48  ls
+   49  rm guio-es.Qmd guion 1
+   50  cp /mnt/c/Users/luisp//Downloads/guio-es.Qmd /home/luispelu/Documentos/Notas/Results/2026-01-29/
+   51  ls
+   52  mv guio-es.Qmd guion1
+   53  ls
+   54  cd ..
+   55  apt install embos
+   56  yes
+   57  ls
+   58  cd D
+   59  cd Documentos/
+   60  ls
+   61  cd ..
+   62  sudo apt install embos
+   63  sudo apt install emboss exonerate wget muscle
+   64  cp /mnt/c/Users/luisp//Downloads/guio-es-1.Qmd /home/luispelu/Documentos/Notas/Results/2026-01-29/
+   65  cp /mnt/c/Users/luisp//Downloads/guio-es (1).Qmd /home/luispelu/Documentos/Notas/Results/2026-01-29/
+   66  git --version
+   67  cd Documentos/
+   68  cd Notas/
+   69  ls -s
+   70  cd Results/
+   71  ls -s
+   72  mkdir 2026-02-02
+   73  cd 2026-02-02
+   74  touch guion02
+   75  ls -s
+   76  git config --global core.editor "nano -w"
+   77  git config --global init.defaultBranch Tronco
+   78  git config --list
+   79  git init
+   80  git status
+   81  git clone ~/
+   82  git clone ~
+   83  ~
+   84  cd ~
+   85  git init
+   86  git status
+   87  git add bash_history
+   88  git add .bash_history
+   89  git add .bash_logout
+   90  git add .bashrc
+   91  git add .cache/
+   92  git add .gitconfig
+   93  git add .lesshst
+   94  git add .motd_shown
+   95  git add .profile
+   96  git add .sudo_as_admin_successful
+   97  git add .wget-hsts
+   98  git add Documentos/
+   99  cd Documentos/
+  100  cd Notas/
+  101  cd Results/
+  102  cd 2026-02-02/
+  103  commit check out
+  104  commix check out
+  105  git check out
+  106  git checkout
+  107  checkout
+  108  git Tronco
+  109  git --help
+  110  git branch
+  111  git checkout
+  112  git switch
+  113  git help <command> checkout
+  114  git help -a
+  115  cd Documentos/
+  116  ls
+  117  git init
+  118  git status
+  119  git add Notas/
+  120  git add Trabajos/
+  121  touch .gitignore
+  122  git status
+  123  git remote add origin https://github.com/luispelu/Documentos.git
+  124  git push -u origin Tronco
+  125  git branch
+  126  git branch Tronco
+  127  git branch main
+  128  git push -u origin main
+  129  ssh-keygen -t ed25519 -C "luispelu@alumni.uv.es"
+  130  cd ~
+  131  ls
+  132  ls .ssh
+  133  cat .ssh/id_ed25519
+  134  cat .ssh/id_ed25519.pub
+  135  clearç
+  136  clear
+  137  history
