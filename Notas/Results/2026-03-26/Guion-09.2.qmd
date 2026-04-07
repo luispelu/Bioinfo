@@ -207,11 +207,10 @@ mean(distMat[modernos, chimpances])/mean(distMat[modernos, neandertales])
 Es aproximadamente 7,5 veces mayor.
 
 - ¿Cómo calcularías la distancia media entre dos secuencias de humanos modernos?
-```{r}
+
 secuencia1 <-
 secuencia2 <-
 mean(distMat[secuencia1, secuencia2])
-```
 
 Esta era nuestra idea inicial, para establecer la distancia entre secuencias concretas. Sin embargo, para la media entre todas las secuencias de humanos modernos de nuestro archivo, utilizamos esto:
 
@@ -312,7 +311,7 @@ fit
 **Ejercicio**
 ¿Cuál es el mejor modelo para secuencias sólo del género Homo?
 
-El mejor modelo es el de menor puntuación BIC, en este caso, TIM2+G(4)+I.
+Elegimos como mejor modelo aquel que da una menor puntuación BIC. En este caso, el mejor modelo es el de menor puntuación BIC, en este caso, TIM2+G(4)+I.
 
 ## Máxima verosimilitud
 
@@ -337,7 +336,33 @@ plot(mt_ml, align.tip.label = TRUE, main = 'Árbol más verosímil')
 
 **Ejercicio**
 - El árbol no está enraizado. Como las secuencias no son todas de la misma época, utiliza rtt() para situar la raíz en el punto más compatible con la hipótesis de reloj molecular.
+
+
+#| fig-height: 10
+mt_ml_rtt <- rtt(mt_ml$tree, tip.dates = mt_ml, objective = 'rms')
+plot(mt_ml_rtt$tree, align.tip.label = TRUE, main = 'Árbol más verosímil')
+
+
+Me está dando error, y no sé solucionar el problema.
+
 - ¿Podrías obtener el árbol más verosímil para el subconjunto de secuencias del género Homo?
+
+```{r}
+#| cache: true 
+modelos2 <- modelTest(mtdnaHomo, control = pml.control(trace = 0))
+head(modelos)
+```
+
+```{r}
+mt_homo <- pml_bb(modelos2,
+                ratchet.par = ratchet.control(maxit = 5L),
+                control = pml.control(trace = 0))
+```
+
+```{r}
+#| fig-height: 10
+plot(mt_homo, align.tip.label = TRUE, main = 'Árbol más verosímil')
+```
 
 ## Con datación de puntas (*tip dating*)
 
@@ -366,6 +391,7 @@ Las edades de las secuencias aportan información sobre el reloj molecular en la
 Esta información se la proporcionamos a la función estimate.dates() mediante un vector de fechas o edades de las secuencias que incluya no sólo las hojas del árbol sino también los nodos internos, o al menos aquellos de los que conocemos la edad. El vector debe tener tantos componentes como nodos internos y hojas tiene el árbol, con valores NA en las edades desconocidas. Para saber en qué orden están numerados los nodos, podemos ejecutar lo siguiente:
 
 ```{r}
+#| fig-height: 10
 mt_ml_rtt <- rtt(mt_ml$tree, fechas36)
 plot(mt_ml_rtt, align.tip.label = TRUE)
 nodelabels()
@@ -375,6 +401,7 @@ nodelabels()
 Como suele suceder, la raíz (en los árboles enraizados) es el nodo que sigue a las hojas, es decir el 37, porque los 36 primeros números son las puntas.
 
 ```{r}
+#| fig-height: 10
 fechasNodos <- c(fechas36, -6500000, rep(NA, 34))
 fechasEstimadas <- estimate.dates(mt_ml_rtt, fechasNodos)
 tasaEstimada <- estimate.mu(mt_ml_rtt, fechasNodos)
