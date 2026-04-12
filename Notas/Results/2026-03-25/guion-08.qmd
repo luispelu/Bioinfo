@@ -1,10 +1,10 @@
 ---
 title: "guion-08"
 format: html
-
+embed-resources: true
 ---
 
-##Objetivos
+## Objetivos
 
 BLAST ejecuta alineamientos locales entre una secuencia “problema” o query, generalmente no muy larga, y un conjunto grande de secuencias (la base de datos) entre las que esperamos encontrar alguna secuencia homóloga a la query. Cada secuencia de la base de datos que pueda alinearse con la query se la llama subject en el alineamiento. Los objetivos de esta práctica son:
 
@@ -18,10 +18,10 @@ BLAST ejecuta alineamientos locales entre una secuencia “problema” o query, 
 
 Una estrategia habitual para identificar genes ortólogos es comprobar si cada uno es, respecto del otro, su mejor resultado de BLAST. Lo que en inglés llaman reciprocal best hits. Aunque se trata de un método heurístico, los resultados son bastante fiables. Vamos a practicarlo entre dos proteomas que debes haber descargado, y que primero debemos enmascarar e indexar para BLAST.
 
-#Enmascarar e indexar los proteomas
+### Enmascarar e indexar los proteomas
 
+Hay que repetir todo esto para Blochmannia.
 
-# Hay que repetir todo esto para Blochmannia.
 ```{bash}
 if [ ! -e ../../Data/buchnera.paa ]; then
    # Creamos un archivo para enmascarar zonas de baja complejidad:
@@ -66,11 +66,11 @@ if [ ! -e ../../Data/blochmannia.paa ]; then
 fi
 ```
 
-#Realizar las búsquedas de BLASTP
+# Realizar las búsquedas de BLASTP
 
 El objetivo es encontrar la proteína de Blochmannia ocreatus que más se parece a cada una de las proteínas de Buchnera aphidicola, y viceversa. Entonces, seleccionaremos las parejas de proteínas que sean recíprocamente las más similares una de otra, por ser más probablemente ortólogas. Otras relaciones de semejanza no recíprocas pueden ser debidas a la paralogía.
 
-*De Buchnera aphidicola hacia Blochmannia ocreatus*
+**De Buchnera aphidicola hacia Blochmannia ocreatus**
 
 ```{bash}
 blastp -query ../../Data/buchnera.fa \
@@ -81,7 +81,7 @@ blastp -query ../../Data/buchnera.fa \
        -max_target_seqs 1
 ```
 
-*De Blochmannia ocreatus hacia Buchnera aphidicola*
+**De Blochmannia ocreatus hacia Buchnera aphidicola**
 
 ```{bash}
 blastp -query ../../Data/blochmannia.fa \
@@ -94,7 +94,7 @@ blastp -query ../../Data/blochmannia.fa \
 
 Todas las proteínas de una de las especies las hemos buscado en la base de datos de la otra, y viceversa. con el max_targets_seqs 1 estamos pidiendo que solo nos seleccione una en cada caso, la que más se parezca.
 
-*Comparación de resultados*
+**Comparación de resultados**
 
 ```{r}
 buc2blo <- read.table(
@@ -128,7 +128,7 @@ Lo que hemos hecho al ejecutar este código es representar las coincidencias ent
 
 Podríamos representar los valores E, esperamos que si las secuencias son similares sean bajos. Otra opción es ver el tamaño de los gaps, comparando la longitud de las secuencias indidivuales (qlen, slen) con la del apareamiento (length) (si los apareamientos son buenos, su tamaño debería ser menor o igual al de las secuencias individuales)
 
-##Ejercicio 2. PSI-BLAST
+## Ejercicio 2. PSI-BLAST
 
 El PSI-BLAST nos permite identificar semejanzas sutiles, como las que existen entre miembros alejados de una superfamilia proteica. Para comprobarlo vamos a realizar una búsqueda a partir de cualquiera de las proteínas siguientes: Q9CC91, P39615, B1AJI8, P47343, Q5UPT2, Q6UDG6, A1AFY9, O59825 y P30314. Todas ellas están en Swissprot y pertenecen a una misma superfamilia. Sin embargo, un simple BLASTP con cualquiera de ellas no encuentra ninguna de las otras. Comprobemos si con un PSI-BLAST lo conseguimos. A continuación lo intento a partir de P39615. Repite los pasos usando otra proteína de la lista como query y compara los resultados.
 
@@ -155,7 +155,7 @@ done
 
 El evalue o valor E corresponde a número de alineamientos que se espera que sea al menos tan buenos como S, siendo S la mejor puntuación posible para un alineamiento entre dos secuencias. En cambio, el inclusion_etresh hace referencia al umbral de valor E que establecemos en la búsqueda para los alineamientos a pares. Conforme menor sea el umbral, mejores serán los apareamientos que obtengamos de la búsqueda. De esta forma, para hacer que la búsqueda sea más sensible, es decir, obtener mayor número de homologías, lo que tendríamos que hacer (o al menos una de las opciones) es aumentar este umbral.
 
-##Ejercicio 3. Origen de la contaminación en un archivo FASTQ
+## Ejercicio 3. Origen de la contaminación en un archivo FASTQ
 
 Para la realización de este ejercicio necesitamos instalar este paquete (en la consola):
 

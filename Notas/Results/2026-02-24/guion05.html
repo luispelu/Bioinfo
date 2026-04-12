@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.6.42">
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>guion-08</title>
+<title>Búsquedas programáticas en la base de datos ENA</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3087,7 +3087,7 @@ vertical-align: -.125em;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">guion-08</h1>
+<h1 class="title">Búsquedas programáticas en la base de datos ENA</h1>
 </div>
 
 
@@ -3095,6 +3095,12 @@ vertical-align: -.125em;
 <div class="quarto-title-meta">
 
     
+    <div>
+    <div class="quarto-title-meta-heading">Última actualización:</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">12 de abril de 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -3104,163 +3110,1145 @@ vertical-align: -.125em;
 </header>
 
 
-<section id="objetivos" class="level2">
-<h2 class="anchored" data-anchor-id="objetivos">Objetivos</h2>
-<p>BLAST ejecuta alineamientos locales entre una secuencia “problema” o query, generalmente no muy larga, y un conjunto grande de secuencias (la base de datos) entre las que esperamos encontrar alguna secuencia homóloga a la query. Cada secuencia de la base de datos que pueda alinearse con la query se la llama subject en el alineamiento. Los objetivos de esta práctica son:</p>
+<section id="preparación" class="level1">
+<h1>Preparación</h1>
+<p>En esta práctica vamos a utilizar los paquetes <code>curl</code> y <code>kableExtra</code> de R.</p>
+</section>
+<section id="objetivos" class="level1">
+<h1>Objetivos</h1>
 <ol type="1">
-<li>Identificar proteínas ortólogas entre dos especies con BLASTP.</li>
-<li>Realizar un PSI-BLAST contra la base de datos Swissprot.</li>
-<li>Determinar el origen de las lecturas que no pudieron ser mapeadas a su genoma de referencia, usando BLASTN remoto.</li>
+<li>Aprender a usar la API<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> de <a href="https://www.ebi.ac.uk/ena">ENA</a>.</li>
 </ol>
-<p>-Mirar guión aula virtual para ver como descargar los datos empleados en la práctica (los tenemos en la carpeta “Data”).-</p>
 </section>
-<section id="ejercicio-1.-identificación-aproximada-de-ortólogos" class="level2">
-<h2 class="anchored" data-anchor-id="ejercicio-1.-identificación-aproximada-de-ortólogos">Ejercicio 1. Identificación aproximada de ortólogos</h2>
-<p>Una estrategia habitual para identificar genes ortólogos es comprobar si cada uno es, respecto del otro, su mejor resultado de BLAST. Lo que en inglés llaman reciprocal best hits. Aunque se trata de un método heurístico, los resultados son bastante fiables. Vamos a practicarlo entre dos proteomas que debes haber descargado, y que primero debemos enmascarar e indexar para BLAST.</p>
-<section id="enmascarar-e-indexar-los-proteomas" class="level3">
-<h3 class="anchored" data-anchor-id="enmascarar-e-indexar-los-proteomas">Enmascarar e indexar los proteomas</h3>
-<p>Hay que repetir todo esto para Blochmannia.</p>
+<section id="introducción" class="level1">
+<h1>Introducción</h1>
+<p>La base de datos ENA almacena diferentes tipos de secuencias nucleotídicas, y mucha información sobre cada uno de los <em>registros</em>. Desde la línea de comandos o desde un lenguaje de programación cualquiera podemos descargar tanto <strong>metadatos</strong>, mediante la API del <em>portal</em> de ENA; como <strong>registros</strong> (es decir, secuencias y la información que las acompaña), mediante la API del <em>navegador</em> (<em>browser</em>) de ENA.</p>
+<p>La API del <em>portal</em> de ENA es una sintaxis para la confección de direcciones URL, con las cuales consultamos metadatos de los registros en la base de datos.</p>
+<p>En el enlace siguiente encontrarás documentación sobre cómo realizar búsquedas avanzadas en ENA programáticamente usando esta API:</p>
+<p><a href="https://ena-docs.readthedocs.io/en/latest/retrieval/programmatic-access/advanced-search.html">https://ena-docs.readthedocs.io/en/latest/retrieval/programmatic-access/advanced-search.html</a></p>
+<p>Puedes también descargar un manual completo y actualizado de la ENA Portal API en el enlace siguiente: <a href="https://www.ebi.ac.uk/ena/portal/api/doc">https://www.ebi.ac.uk/ena/portal/api/doc</a>.</p>
+<p>Tienes un ejemplo en la URL siguiente. Cópiala, pégala en la barra del navegador y accederás a una tabla que describe los registros de tipo <em>read run</em> (lecturas cortas) procedentes del estómago de vacas del Reino Unido:</p>
+<pre><code>https://www.ebi.ac.uk/ena/portal/api/search?result=read_run&amp;query=country=&quot;United Kingdom&quot; AND host_tax_id=9913 AND host_body_site=&quot;rumen&quot;</code></pre>
+<p>Para extraer directamente las secuencias y su información asociada, ENA nos ofrece otro portal, con una API muy parecida: el ENA Browser Portal, cuya documentación deberíamos poder descargar de aquí: <a href="https://www.ebi.ac.uk/ena/browser/api/doc">https://www.ebi.ac.uk/ena/browser/api/doc</a>.</p>
+<p>Como ejemplo, el enlace siguiente te permite descargar la secuencia del cromosoma mitocondrial de un neandertal.</p>
+<p><code>https://www.ebi.ac.uk/ena/browser/api/fasta/KJ533544</code></p>
+<p>Como ves, para poder descargar una secuencia (o más) necesitas conocer su número de acceso; KJ533544 en el ejemplo.</p>
+</section>
+<section id="la-api-del-portal-de-ena" class="level1">
+<h1>La API del portal de ENA</h1>
+<p>Cualquier consulta dirigida al portal de ENA tomará la forma de una URL con la estructura siguiente:</p>
+<ol type="1">
+<li>La dirección del portal: <code>https://www.ebi.ac.uk/ena/portal/api</code>.</li>
+<li>El <strong>endpoint</strong> <code>/search</code>, que especifica que realizamos una consulta o búsqueda. Existen otros <em>endpoints</em>.</li>
+<li>Los parámetros de la búsqueda, que incluyen cinco campos separados por “&amp;”:</li>
+</ol>
+<ul>
+<li><code>/result=&lt;tipo de datos&gt;</code>, donde <code>&lt;tipo de datos&gt;</code> puede ser cualquiera de los <em>results</em> disponibles: <em>read_run</em>, <em>read_experiment</em>, <em>sample</em>, <em>study</em>, <em>sequence_release</em>, <em>sequence_update</em>, <em>wgs_set</em>, <em>tsa_set</em>, <em>assembly</em>, <em>coding_release</em>, <em>coding_update</em>, <em>noncoding_release</em>, <em>noncoding_update</em>, y <em>taxonomy</em>.</li>
+<li>Opcionalmente, <code>query=&lt;filtros&gt;</code>, donde <code>&lt;filtros&gt;</code> debe sustituirse por una o más condiciones que deben cumplir los registros para ser presentados. Las diferentes condiciones o filtros irán separadas por “AND”, “OR” o “NOT”. Existen reglas sobre cómo especificar cada posible filtro para cada posible tipo de resultado. Estas reglas están especificadas en la documentación del portal: <a href="https://www.ebi.ac.uk/ena/portal/api/doc">https://www.ebi.ac.uk/ena/portal/api/doc</a>.</li>
+<li>Opcionalmente, <code>fields=&lt;campos&gt;</code>, donde <code>&lt;campos&gt;</code> se debe sustituir por la lista, separada por comas, de los campos de información que deseamos extraer de cada registro. Es decir, las columnas que deseamos ver en la tabla de resultados. Cada tipo de <code>result</code> admite un conjunto de campos disponibles, que también están detallados en la documentación del portal.</li>
+<li>Opcionalmente, <code>limit=&lt;límite&gt;</code> donde <code>&lt;límite&gt;</code> representa el número máximo de registros (líneas) que queremos extraer en la tabla de resultados. Por defecto, el límite es 100000. Para no limitar la búsqueda, hay que especificar <code>limit=0</code>.</li>
+<li>Opcionalmente, <code>format=&lt;formato&gt;</code>, donde <code>&lt;formato&gt;</code> representa uno de dos valores posibles: <code>tsv</code> (<em>tab separated values</em>, usado por defecto) o <code>json</code>.</li>
+</ul>
+<section id="ejemplos" class="level3">
+<h3 class="anchored" data-anchor-id="ejemplos">Ejemplos</h3>
+<pre><code>https://www.ebi.ac.uk/ena/portal/api/search?result=sequence&amp;query=(specimen_voucher=&quot;ZMB:Moll:*&quot; OR bio_material=&quot;ZMB:Moll:*&quot;)&amp;fields=specimen_voucher,bio_material,scientific_name</code></pre>
+<pre><code>https://www.ebi.ac.uk/ena/portal/api/search?result=analysis&amp;query=country=&quot;United Kingdom&quot; AND host_tax_id=9913 AND host_body_site=&quot;rumen&quot; AND analysis_type=&quot;SEQUENCE_ASSEMBLY&quot; AND assembly_type=&quot;primary metagenome&quot;&amp;fields=submitted_ftp</code></pre>
+<pre><code>https://www.ebi.ac.uk/ena/portal/api/search?result=assembly&amp;query=tax_tree(6157) AND genome_representation=&quot;full&quot;&amp;fields=version,tax_id,scientific_name,last_updated,base_count&amp;limit=0</code></pre>
+</section>
+</section>
+<section id="desde-una-sesión-de-r" class="level1">
+<h1>Desde una sesión de R</h1>
+<p>La función <code>read.table()</code> puede leer directamente de una página web. Pero si queremos descargar el resultado de una consulta programática en un archivo, podemos usar el paquete la función <code>curl_download()</code>, del paquete <code>curl</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">!</span> <span class="ot">-e</span> ../../Data/buchnera.paa <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>   <span class="co"># Creamos un archivo para enmascarar zonas de baja complejidad:</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>   <span class="cf">if</span> <span class="bu">[</span> <span class="ot">!</span> <span class="ot">-e</span> buchnera_seg.asnb <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>      <span class="ex">segmasker</span> <span class="at">-in</span> ../../Data/buchnera.fa <span class="dt">\</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">-infmt</span> fasta <span class="dt">\</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">-parse_seqids</span> <span class="dt">\</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">-outfmt</span> maskinfo_asn1_bin <span class="dt">\</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">-out</span> ../../Data/buchnera_seg.asnb</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>   <span class="cf">fi</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>   <span class="co"># Y indexamos el archivo FASTA para BLAST:</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>   <span class="ex">makeblastdb</span>  <span class="at">-in</span> ../../Data/buchnera.fa <span class="dt">\</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                <span class="at">-input_type</span> fasta <span class="dt">\</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                <span class="at">-dbtype</span> prot <span class="dt">\</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                <span class="at">-parse_seqids</span> <span class="dt">\</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>                <span class="at">-mask_data</span> ../../Data/buchnera_seg.asnb <span class="dt">\</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                <span class="at">-out</span> ../../Data/buchnera <span class="dt">\</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                <span class="at">-title</span> <span class="st">&quot;Proteoma de Buchnera&quot;</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&#39;curl&#39;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Using libcurl 7.81.0 with GnuTLS/3.7.3</code></pre>
 </div>
-<p>Hay que repetir lo mismo para Blochmannia</p>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Ejercicio 1
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Intenta ejecutar los bloques siguientes. Compáralos y explica qué problemas o dificultades identificas en cada uno.</p>
+<p>En el primer bloque, en comparación con el segundo, falta la función URLencode, que es la que nos permite desencriptar el enlace y descargar el archivo de texto. Lo que hace es darlo más mascadito que si copiasemos el enlace y lo pegásemos en el navegador, facilita la descarga.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">!</span> <span class="ot">-e</span> ../../Data/blochmannia.paa <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>   <span class="co"># Creamos un archivo para enmascarar zonas de baja complejidad:</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>   <span class="cf">if</span> <span class="bu">[</span> <span class="ot">!</span> <span class="ot">-e</span> buchnera_seg.asnb <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>      <span class="ex">segmasker</span> <span class="at">-in</span> ../../Data/blochmannia.fa <span class="dt">\</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">-infmt</span> fasta <span class="dt">\</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">-parse_seqids</span> <span class="dt">\</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">-outfmt</span> maskinfo_asn1_bin <span class="dt">\</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">-out</span> ../../Data/blochmannia_seg.asnb</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>   <span class="cf">fi</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>   <span class="co"># Y indexamos el archivo FASTA para BLAST:</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>   <span class="ex">makeblastdb</span>  <span class="at">-in</span> ../../Data/blochmannia.fa <span class="dt">\</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                <span class="at">-input_type</span> fasta <span class="dt">\</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                <span class="at">-dbtype</span> prot <span class="dt">\</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>                <span class="at">-parse_seqids</span> <span class="dt">\</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>                <span class="at">-mask_data</span> ../../Data/blochmannia_seg.asnb <span class="dt">\</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>                <span class="at">-out</span> ../../Data/blochmannia <span class="dt">\</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>                <span class="at">-title</span> <span class="st">&quot;Proteoma de Blochmannia&quot;</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">curl_download</span>(<span class="st">&#39;https://www.ebi.ac.uk/ena/portal/api/search?result=assembly&amp;query=tax_tree(6157)&#39;</span> AND <span class="st">&#39;genome_representation=&quot;full&quot;&amp;fields=version,tax_id,scientific_name,last_updated,base_count&amp;limit=0&#39;</span>,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">destfile =</span> <span class="st">&#39;z1.txt&#39;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>Error in parse(text = input): &lt;text&gt;:1:98: unexpected symbol
+1: curl_download(&#39;https://www.ebi.ac.uk/ena/portal/api/search?result=assembly&amp;query=tax_tree(6157)&#39; AND
+                                                                                                     ^</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">curl_download</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">URLencode</span>(<span class="st">&#39;https://www.ebi.ac.uk/ena/portal/api/search?result=assembly&amp;query=tax_tree(6157) AND genome_representation=&quot;full&quot;&amp;fields=version,tax_id,scientific_name,last_updated,base_count&amp;limit=0&#39;</span>),</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">destfile =</span> <span class="st">&#39;z1.txt&#39;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>portal <span class="ot">&lt;-</span> <span class="st">&#39;https://www.ebi.ac.uk/ena/portal/api/search?&#39;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="st">&#39;result=assembly&amp;&#39;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>query  <span class="ot">&lt;-</span> <span class="st">&#39;query=tax_tree(6157) AND genome_representation=&quot;full&quot;&amp;&#39;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>fields <span class="ot">&lt;-</span> <span class="st">&#39;fields=version,tax_id,scientific_name,last_updated,base_count&amp;&#39;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>limit  <span class="ot">&lt;-</span> <span class="st">&#39;limit=0&#39;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>URL <span class="ot">&lt;-</span> <span class="fu">paste0</span>(portal, result, query, fields, limit)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="fu">curl_download</span>(<span class="fu">URLencode</span>(URL), <span class="at">destfile =</span> <span class="st">&#39;z2.txt&#39;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En este caso, lo que tenemos en el bloque es que nos hace una especie de división de lo que es el archivo anterior, en la que nos indica donde se hace la búsqueda, el resultado de la misma, los filtros de la búsqueda, campos que se han incluido, etc. Lo que hace es dividir las órdenes, y podríamos ir ejecutándolas de una en una. La función paste0 lo que hace es fusionar todas las funciones. En este bloque lo vemos todo más claro, y de hecho es más práctico: si quisiésemos hacer una búsqueda diferente, podemos cambiar solo lo que necesitemos, y no toda la órden. La función curl_download guarda los contenidos que le pongamos en un archivo de texto.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Ejercicio 2
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Confecciona una URL para descargar una tabla de las secuencias codificantes de alcohol deshidrogenasas del género <em>Drosophila</em>, que te permita contestar las preguntas siguientes. Consulta el apéndice de este guión, si lo necesitas.</p>
+<p>https://www.ebi.ac.uk/ena/browser/advanced-search?result=sequence&amp;query=tax_tree(7215)%20AND%20description%3D%22alcohol%20dehydrogenase%22%20AND%20mol_type%3D%22genomic%20dna%22&amp;fields=accession%2Cdescription%2Ctax_id%2Cmol_type</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="st">&#39;result=sequence&amp;&#39;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>query  <span class="ot">&lt;-</span> <span class="st">&#39;query=tax_tree(7215) AND description=&quot;alcohol dehydrogenase&quot;&amp;&#39;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>fields <span class="ot">&lt;-</span> <span class="st">&#39;fields=accession,description,tax_id,scientific_name,first_public,base_count&amp;&#39;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>URL2 <span class="ot">&lt;-</span> <span class="fu">paste0</span>(portal, result, query, fields, limit)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">curl_download</span>(<span class="fu">URLencode</span>(URL), <span class="at">destfile =</span> <span class="st">&#39;ADH.txt&#39;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>No hace falta que pongamos el portal y el limit, es una variable que ya tenemos definida al ejecutar el bloque de antes, no hace falta que lo volvamos a definir.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ADH <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">&#39;ADH.txt&#39;</span>, <span class="at">sep =</span> <span class="st">&#39;</span><span class="sc">\t</span><span class="st">&#39;</span>, <span class="at">quote =</span> <span class="st">&quot;&quot;</span>, <span class="at">header =</span> <span class="cn">TRUE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La función quote sirve para que ignore posibles ’ que puedan aparecer en la descripción</p>
+<p>Hemos generado un marco de datos llamado ADH que contiene este archivo</p>
+<ol type="1">
+<li>¿Cuántas secuencias hay con el término “alcohol dehydrogenase” en su descripción? En la búsqueda que yo he hecho hay 1258</li>
+<li>¿Qué longitudes tienen? La media de las secuencias es de 1252 nucleótidos</li>
+<li>¿De cuántas especies diferentes son estas secuencias? De 308 especies</li>
+<li>¿Cuándo se publicaron las más recientes? El 03-04-2022</li>
+</ol>
+</div>
 </div>
 </section>
-</section>
-<section id="realizar-las-búsquedas-de-blastp" class="level1">
-<h1>Realizar las búsquedas de BLASTP</h1>
-<p>El objetivo es encontrar la proteína de Blochmannia ocreatus que más se parece a cada una de las proteínas de Buchnera aphidicola, y viceversa. Entonces, seleccionaremos las parejas de proteínas que sean recíprocamente las más similares una de otra, por ser más probablemente ortólogas. Otras relaciones de semejanza no recíprocas pueden ser debidas a la paralogía.</p>
-<p><strong>De Buchnera aphidicola hacia Blochmannia ocreatus</strong></p>
+<section id="trabajar-con-los-resultados" class="level1">
+<h1>Trabajar con los resultados</h1>
+<p>La función <code>read.table()</code> de R nos permite leer un archivo (o una URL) para crear una tabla. Necesita que todas las filas tengan el mismo número de campos o columnas, delimitadas por el carácter especificado con la opción <code>sep = &quot;\t&quot;</code>. Esta función nos permite también especificar el tipo de datos de cada columna. Podemos usar como ejemplo los genomas de platelmintos del ejercicio 1:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">blastp</span> <span class="at">-query</span> ../../Data/buchnera.fa <span class="dt">\</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">-db</span> ../../Data/blochmannia <span class="dt">\</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">-out</span> buc2blo.txt <span class="dt">\</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">-outfmt</span> <span class="st">&#39;6 qseqid sseqid qlen slen length evalue bitscore&#39;</span> <span class="dt">\</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">-evalue</span> 0.001 <span class="dt">\</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">-max_target_seqs</span> 1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Si no has ejecutado el tercer bloque del ejercicio 1,</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># la variable URL no estará definida.</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>platelmintos <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="fu">URLencode</span>(URL),</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">header =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">colClasses =</span> <span class="fu">c</span>(<span class="st">&#39;numeric&#39;</span>, <span class="st">&#39;factor&#39;</span>, <span class="st">&#39;character&#39;</span>, <span class="st">&#39;Date&#39;</span>, <span class="st">&#39;numeric&#39;</span>, <span class="st">&#39;character&#39;</span>),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">sep =</span> <span class="st">&#39;</span><span class="sc">\t</span><span class="st">&#39;</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.strings =</span> <span class="st">&#39;&#39;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>El código siguiente crea una nueva columna en la tabla con el género al que pertenece cada secuencia. Se toma como género la primera palabra del nombre científico. Para ello, debemos separar las partes de cada nombre delimitadas por un espacio en blanco, con la función <code>strsplit()</code>. Y por último usamos la función <code>sapply()</code> para aplicar a cada nombre científico la función de selección de componentes, <code>[</code>, y la opción “1”, para seleccionar sólo el primero de los componentes en que habíamos dividido cada nombre científico.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#SepararGenero</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>platelmintos<span class="sc">$</span>genus <span class="ot">&lt;-</span> <span class="fu">sapply</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">strsplit</span>(platelmintos<span class="sc">$</span>scientific_name, <span class="st">&#39; &#39;</span>),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>   <span class="st">&#39;[&#39;</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>   <span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Una vez clasificadas por género, podemos visualizar el número de bases de cada secuencia agrupadas por género.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">8</span>,<span class="dv">7</span>,<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(base_count <span class="sc">~</span> last_publicated, <span class="at">data =</span> platelmintos,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">las =</span> <span class="dv">2</span>, <span class="at">xlab =</span> <span class="st">&#39;&#39;</span>, <span class="at">ylab =</span> <span class="st">&#39;&#39;</span>, <span class="at">cex.axis =</span> <span class="fl">0.8</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>Error:
+! object &#39;last_publicated&#39; not found</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mtext</span>(<span class="st">&#39;Genus&#39;</span>, <span class="at">side =</span> <span class="dv">1</span>, <span class="at">line =</span> <span class="dv">7</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>Error in `mtext()`:
+! plot.new has not been called yet</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mtext</span>(<span class="st">&#39;Base count&#39;</span>, <span class="at">side =</span> <span class="dv">2</span>, <span class="at">line =</span> <span class="dv">5</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>Error in `mtext()`:
+! plot.new has not been called yet</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>plat <span class="ot">&lt;-</span> platelmintos</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>plat<span class="sc">$</span>last_updated <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(plat<span class="sc">$</span>last_updated, <span class="st">&#39;%Y-%m-%d&#39;</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>plat <span class="ot">&lt;-</span> plat[<span class="fu">order</span>(plat<span class="sc">$</span>last_updated),]</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>plat<span class="sc">$</span>cumLen <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(plat<span class="sc">$</span>base_count)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(plat<span class="sc">$</span>last_updated, plat<span class="sc">$</span>cumLen, <span class="at">type =</span> <span class="st">&#39;l&#39;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img role="img" src="data:image/png;base64,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" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Ejercicio 3
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>¿De qué manera necesitarías transformar la tabla <code>platelmintos</code> para poder representar gráficamente la longitud acumulada de todas las secuencias disponibles a medida que se han ido publicando?</p>
+</div>
+</div>
+</section>
+<section id="la-api-del-navegador-browser-de-ena" class="level1">
+<h1>La API del navegador (<em>browser</em>) de ENA</h1>
+<p>Entre las secuencias obtenidas en el ejercicio 2, encontrarás las siguientes: AAC39011, AAY25307, ABU44510, ABG56046 y AAO06902. Vamos a descargarlas en formato fasta:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>portal    <span class="ot">&lt;-</span> <span class="st">&#39;https://www.ebi.ac.uk/ena/browser/api/&#39;</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>formato   <span class="ot">&lt;-</span> <span class="st">&#39;fasta/&#39;</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>accession <span class="ot">&lt;-</span> <span class="st">&#39;AAC39011,AAY25307,ABU44510,ABG56046,AAO06902&#39;</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>URL <span class="ot">&lt;-</span> <span class="fu">paste0</span>(portal, formato, accession)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>URL</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Warning: [blastp] Examining 5 or more matches is recommended</code></pre>
+<pre><code>[1] &quot;https://www.ebi.ac.uk/ena/browser/api/fasta/AAC39011,AAY25307,ABU44510,ABG56046,AAO06902&quot;</code></pre>
 </div>
 </div>
-<p><strong>De Blochmannia ocreatus hacia Buchnera aphidicola</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">blastp</span> <span class="at">-query</span> ../../Data/blochmannia.fa <span class="dt">\</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">-db</span> ../../Data/buchnera <span class="dt">\</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">-out</span> blo2buc.txt <span class="dt">\</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">-outfmt</span> <span class="st">&#39;6 qseqid sseqid qlen slen length evalue bitscore&#39;</span> <span class="dt">\</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">-evalue</span> 0.001 <span class="dt">\</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">-max_target_seqs</span> 1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Warning: [blastp] Examining 5 or more matches is recommended</code></pre>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">curl_download</span>(URL, <span class="at">destfile =</span> <span class="st">&#39;Adh.fasta&#39;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Ejercicio 4
 </div>
 </div>
-<p>Todas las proteínas de una de las especies las hemos buscado en la base de datos de la otra, y viceversa. con el max_targets_seqs 1 estamos pidiendo que solo nos seleccione una en cada caso, la que más se parezca.</p>
-<p><strong>Comparación de resultados</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>buc2blo <span class="ot">&lt;-</span> <span class="fu">read.table</span>(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>   <span class="st">&#39;buc2blo.txt&#39;</span>,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>   <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&#39;query&#39;</span>, <span class="st">&#39;subject&#39;</span>, <span class="st">&#39;qlen&#39;</span>, <span class="st">&#39;slen&#39;</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&#39;length&#39;</span>, <span class="st">&#39;evalue&#39;</span>, <span class="st">&#39;bitscore&#39;</span>)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>blo2buc <span class="ot">&lt;-</span> <span class="fu">read.table</span>(</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>   <span class="st">&#39;blo2buc.txt&#39;</span>,</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>   <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&#39;query&#39;</span>, <span class="st">&#39;subject&#39;</span>, <span class="st">&#39;qlen&#39;</span>, <span class="st">&#39;slen&#39;</span>,</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&#39;length&#39;</span>, <span class="st">&#39;evalue&#39;</span>, <span class="st">&#39;bitscore&#39;</span>)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>-Echa un vistazo a estas tablas de resultados. ¿Sabrías identificar las parejas de proteínas que son recíprocamente la que más se parece una a la otra?</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>buc2blo<span class="sc">$</span>reverse <span class="ot">&lt;-</span> blo2buc[</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">match</span>(buc2blo<span class="sc">$</span>subject, blo2buc<span class="sc">$</span>query), <span class="co">#La función match nos sirve para comparar y cruzar la información de dos tablas distintas.</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>   <span class="st">&#39;subject&#39;</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>coincidencias <span class="ot">&lt;-</span> buc2blo[</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>   buc2blo<span class="sc">$</span>query <span class="sc">==</span> buc2blo<span class="sc">$</span>reverse,</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">c</span>(<span class="st">&#39;query&#39;</span>, <span class="st">&#39;subject&#39;</span>)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Lo que hemos hecho al ejecutar este código es representar las coincidencias entre ambos archivos, es decir, las entradas de ambos en las que la query de uno es el subject del otro, y viceversa. Hemos cogido la comparación de la primera especie con la segunda, la de la segunda con la primera, y las hemos combinado en este archivo llamado “coincidencias” (en el environment).</p>
-<p>-¿Qué datos te gustaría representar gráficamente para ganar confianza en que los resultados son correctos y tienen sentido?</p>
-<p>Podríamos representar los valores E, esperamos que si las secuencias son similares sean bajos. Otra opción es ver el tamaño de los gaps, comparando la longitud de las secuencias indidivuales (qlen, slen) con la del apareamiento (length) (si los apareamientos son buenos, su tamaño debería ser menor o igual al de las secuencias individuales)</p>
-<section id="ejercicio-2.-psi-blast" class="level2">
-<h2 class="anchored" data-anchor-id="ejercicio-2.-psi-blast">Ejercicio 2. PSI-BLAST</h2>
-<p>El PSI-BLAST nos permite identificar semejanzas sutiles, como las que existen entre miembros alejados de una superfamilia proteica. Para comprobarlo vamos a realizar una búsqueda a partir de cualquiera de las proteínas siguientes: Q9CC91, P39615, B1AJI8, P47343, Q5UPT2, Q6UDG6, A1AFY9, O59825 y P30314. Todas ellas están en Swissprot y pertenecen a una misma superfamilia. Sin embargo, un simple BLASTP con cualquiera de ellas no encuentra ninguna de las otras. Comprobemos si con un PSI-BLAST lo conseguimos. A continuación lo intento a partir de P39615. Repite los pasos usando otra proteína de la lista como query y compara los resultados.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Como Swissprot debería estar ya descargada en `../../Data`, podemos sacar</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># de ahí la secuencia de la proteína escogida:</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> proteina <span class="kw">in</span> Q9CC91 P39615 B1AJI8 P47343 Q5UPT2 Q6UDG6 A1AFY9 O59825 P30314</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="cf">do</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">blastdbcmd</span> <span class="at">-db</span> ../../Data/swissprot <span class="at">-entry</span> <span class="va">$proteina</span> <span class="at">-out</span> <span class="va">$proteina</span>.fa</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Y ahora la usamos como query en psi-blast:</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="ex">psiblast</span> <span class="at">-db</span> ../../Data/swissprot <span class="dt">\</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">-query</span> P39615.fa <span class="dt">\</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">-out</span> P39615.blastout.txt <span class="dt">\</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">-evalue</span> 0.1 <span class="dt">\</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">-outfmt</span> 7 <span class="dt">\</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">-inclusion_ethresh</span> 0.001 <span class="dt">\</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">-num_iterations</span> 7 <span class="dt">\</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>         <span class="at">-matrix</span> BLOSUM62</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Warning: [psiblast] Query_1 P39615.1 RecName:.. : Composition-based score adjustment conditioned on sequence properties and unconditional composition-based score adjustment is not supported with PSSMs, resetting to default value of standard composition-based statistics 
-Warning: [psiblast] Query_1 P39615.1 RecName:.. : Composition-based score adjustment conditioned on sequence properties and unconditional composition-based score adjustment is not supported with PSSMs, resetting to default value of standard composition-based statistics 
-Warning: [psiblast] Query_1 P39615.1 RecName:.. : Composition-based score adjustment conditioned on sequence properties and unconditional composition-based score adjustment is not supported with PSSMs, resetting to default value of standard composition-based statistics 
-Warning: [psiblast] Query_1 P39615.1 RecName:.. : Composition-based score adjustment conditioned on sequence properties and unconditional composition-based score adjustment is not supported with PSSMs, resetting to default value of standard composition-based statistics 
-Warning: [psiblast] Query_1 P39615.1 RecName:.. : Composition-based score adjustment conditioned on sequence properties and unconditional composition-based score adjustment is not supported with PSSMs, resetting to default value of standard composition-based statistics 
-Warning: [psiblast] Query_1 P39615.1 RecName:.. : Composition-based score adjustment conditioned on sequence properties and unconditional composition-based score adjustment is not supported with PSSMs, resetting to default value of standard composition-based statistics 
-Warning: [psiblast] Query_1 P39615.1 RecName:.. : Composition-based score adjustment conditioned on sequence properties and unconditional composition-based score adjustment is not supported with PSSMs, resetting to default value of standard composition-based statistics 
-Warning: [psiblast] Query_1 P39615.1 RecName:.. : Composition-based score adjustment conditioned on sequence properties and unconditional composition-based score adjustment is not supported with PSSMs, resetting to default value of standard composition-based statistics 
-Warning: [psiblast] Query_1 P39615.1 RecName:.. : Composition-based score adjustment conditioned on sequence properties and unconditional composition-based score adjustment is not supported with PSSMs, resetting to default value of standard composition-based statistics </code></pre>
+<div class="callout-body-container callout-body">
+<p>Intenta descargar esas mismas secuencias en formato EMBL.</p>
 </div>
 </div>
-<p>-Consulta la ayuda de psiblast y asegúrate de entender para qué sirven los argumentos que hemos usado. Por ejemplo, ¿cuál es la diferencia entre -evalue y -inclusion_ethresh?¿Cómo harías que la búsqueda fuera más sensible todavía?</p>
-<p>El evalue o valor E corresponde a número de alineamientos que se espera que sea al menos tan buenos como S, siendo S la mejor puntuación posible para un alineamiento entre dos secuencias. En cambio, el inclusion_etresh hace referencia al umbral de valor E que establecemos en la búsqueda para los alineamientos a pares. Conforme menor sea el umbral, mejores serán los apareamientos que obtengamos de la búsqueda. De esta forma, para hacer que la búsqueda sea más sensible, es decir, obtener mayor número de homologías, lo que tendríamos que hacer (o al menos una de las opciones) es aumentar este umbral.</p>
 </section>
-<section id="ejercicio-3.-origen-de-la-contaminación-en-un-archivo-fastq" class="level2">
-<h2 class="anchored" data-anchor-id="ejercicio-3.-origen-de-la-contaminación-en-un-archivo-fastq">Ejercicio 3. Origen de la contaminación en un archivo FASTQ</h2>
-<p>Para la realización de este ejercicio necesitamos instalar este paquete (en la consola):</p>
-<p>BiocManager::install(‘Biostrings’)</p>
+<section id="apéndice" class="level1">
+<h1>Apéndice</h1>
+<section id="campos-de-información-para-filtrar-la-búsqueda-de-resultados-de-tipo-coding" class="level2">
+<h2 class="anchored" data-anchor-id="campos-de-información-para-filtrar-la-búsqueda-de-resultados-de-tipo-coding">Campos de información para filtrar la búsqueda de resultados de tipo <em>coding</em></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&#39;knitr&#39;</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>URL <span class="ot">&lt;-</span> <span class="st">&#39;https://www.ebi.ac.uk/ena/portal/api/searchFields?result=coding&#39;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>CodingSearchFields <span class="ot">&lt;-</span> <span class="fu">read.table</span>(URL, <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">&#39;</span><span class="sc">\t</span><span class="st">&#39;</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(CodingSearchFields)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 72%">
+<col style="width: 12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">columnId</th>
+<th style="text-align: left;">description</th>
+<th style="text-align: left;">type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">accession</td>
+<td style="text-align: left;">accession number</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">allele</td>
+<td style="text-align: left;">name of the allele for the given gene</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">altitude</td>
+<td style="text-align: left;">Altitude (m)</td>
+<td style="text-align: left;">number</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artificial_location</td>
+<td style="text-align: left;">indicates location is modified to adjust for the presence of a frameshift or internal stop codon</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">base_count</td>
+<td style="text-align: left;">number of base pairs</td>
+<td style="text-align: left;">number</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">bio_material</td>
+<td style="text-align: left;">identifier for biological material including institute and collection code</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">cell_line</td>
+<td style="text-align: left;">cell line from which the sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">cell_type</td>
+<td style="text-align: left;">cell type from which the sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">codon_start</td>
+<td style="text-align: left;">indicates the offset of the first complete codon relative to the first base of the coding feature</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">collected_by</td>
+<td style="text-align: left;">name of the person who collected the specimen</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">country</td>
+<td style="text-align: left;">locality of sample isolation: country names, oceans or seas, followed by regions and localities</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">cultivar</td>
+<td style="text-align: left;">cultivar (cultivated variety) of plant from which sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">culture_collection</td>
+<td style="text-align: left;">identifier for the sample culture including institute and collection code</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dataclass</td>
+<td style="text-align: left;">sequence data class</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">description</td>
+<td style="text-align: left;">brief sequence description</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dev_stage</td>
+<td style="text-align: left;">sample obtained from an organism in a specific developmental stage</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ec_number</td>
+<td style="text-align: left;">Enzyme Commission number for enzyme product of sequence</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ecotype</td>
+<td style="text-align: left;">a population within a given species displaying traits that reflect adaptation to a local habitat</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">environmental_sample</td>
+<td style="text-align: left;">identifies sequences derived by direct molecular isolation from an environmental DNA sample</td>
+<td style="text-align: left;">boolean</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">exception</td>
+<td style="text-align: left;">indicates that the coding region cannot be translated using standard biological rules</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">experiment</td>
+<td style="text-align: left;">a brief description of the nature of the experimental evidence</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">first_public</td>
+<td style="text-align: left;">date when made public</td>
+<td style="text-align: left;">date</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">function</td>
+<td style="text-align: left;">function attributed to a sequence</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">gene</td>
+<td style="text-align: left;">symbol of the gene corresponding to a sequence region</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">gene_synonym</td>
+<td style="text-align: left;">synonymous, replaced, obsolete or former gene symbol</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">germline</td>
+<td style="text-align: left;">the sample is an unrearranged molecule that was inherited from the parental germline</td>
+<td style="text-align: left;">boolean</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">haplotype</td>
+<td style="text-align: left;">combination of alleles that are linked together on the same physical chromosome</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">host</td>
+<td style="text-align: left;">natural (as opposed to laboratory) host to the organism from which sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">identified_by</td>
+<td style="text-align: left;">name of the taxonomist who identified the specimen</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">indexed_date</td>
+<td style="text-align: left;">date when record was indexed for presentation</td>
+<td style="text-align: left;">date</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">inference</td>
+<td style="text-align: left;">a structured description of non-experimental evidence</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">isolate</td>
+<td style="text-align: left;">individual isolate from which sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">isolation_source</td>
+<td style="text-align: left;">describes the physical, environmental and/or local geographical source of the sample</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">keywords</td>
+<td style="text-align: left;">keywords associated with sequence</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">lab_host</td>
+<td style="text-align: left;">scientific name of the laboratory host used to propagate the source organism for the sample</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">last_updated</td>
+<td style="text-align: left;">date when last updated</td>
+<td style="text-align: left;">date</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">location</td>
+<td style="text-align: left;">geographic location of isolation of the sample</td>
+<td style="text-align: left;">latlon</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">locus_tag</td>
+<td style="text-align: left;">a submitter-supplied, systematic, stable identifier for a gene and its associated features</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">map</td>
+<td style="text-align: left;">genomic map position of feature</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">marker</td>
+<td style="text-align: left;">marker classification</td>
+<td style="text-align: left;">indexed</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">mating_type</td>
+<td style="text-align: left;">mating type of the organism from which the sequence was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">mol_type</td>
+<td style="text-align: left;">in vivo molecule type of the sequence</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">old_locus_tag</td>
+<td style="text-align: left;">deprecated submitter-supplied, systematic, stable identifier for a gene and its associated features</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">operon</td>
+<td style="text-align: left;">name of the group of contiguous genes transcribed into a single transcript</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">organelle</td>
+<td style="text-align: left;">membrane-bound intracellular structure from which the sequence was obtained</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">parent_accession</td>
+<td style="text-align: left;">parent sequence accession number</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">plasmid</td>
+<td style="text-align: left;">name of naturally occurring plasmid from which the sequence was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">product</td>
+<td style="text-align: left;">name of the product associated with the feature</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">protein_id</td>
+<td style="text-align: left;">a stable protein identifier issued by INSDC</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">pseudo</td>
+<td style="text-align: left;">the feature is non-functional</td>
+<td style="text-align: left;">boolean</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">pseudo_gene</td>
+<td style="text-align: left;">indicates that this feature is a pseudogene</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ribosomal_slippage</td>
+<td style="text-align: left;">indicates ribosomal slippage (change to an alternative reading frame) during protein translation</td>
+<td style="text-align: left;">boolean</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sample_accession</td>
+<td style="text-align: left;">sample accession number</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">scientific_name</td>
+<td style="text-align: left;">scientific name of an organism</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sequence_md5</td>
+<td style="text-align: left;">MD5 checksum of sequence</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sequence_version</td>
+<td style="text-align: left;">Version of the sequence</td>
+<td style="text-align: left;">number</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">serotype</td>
+<td style="text-align: left;">serological variety of a species characterized by its antigenic properties</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">serovar</td>
+<td style="text-align: left;">serological variety of a species (usually a prokaryote) characterized by its antigenic properties</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sex</td>
+<td style="text-align: left;">sex of the organism from which the sample was obtained</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">specimen_voucher</td>
+<td style="text-align: left;">identifier for the sample culture including institute and collection code</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">standard_name</td>
+<td style="text-align: left;">accepted standard name for a feature</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">status</td>
+<td style="text-align: left;">Status</td>
+<td style="text-align: left;">number</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">strain</td>
+<td style="text-align: left;">strain from which sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">study_accession</td>
+<td style="text-align: left;">study accession number</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sub_species</td>
+<td style="text-align: left;">name of sub-species of organism from which sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sub_strain</td>
+<td style="text-align: left;">name or identifier of a genetically or otherwise modified strain from which sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">tag</td>
+<td style="text-align: left;">Classification Tags</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">tax_division</td>
+<td style="text-align: left;">taxonomic division</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">tax_id</td>
+<td style="text-align: left;">NCBI taxonomic classification</td>
+<td style="text-align: left;">taxonomy</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">tissue_lib</td>
+<td style="text-align: left;">tissue library from which sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">tissue_type</td>
+<td style="text-align: left;">tissue type from which the sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">topology</td>
+<td style="text-align: left;">sequence topology: circular or linear</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">trans_splicing</td>
+<td style="text-align: left;">indicates exons from two RNA molecules are ligated in intermolecular reaction to form mature RNA</td>
+<td style="text-align: left;">boolean</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">transl_except</td>
+<td style="text-align: left;">a single codon translation that does not conform to genetic code</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">transl_table</td>
+<td style="text-align: left;">indicates the genetic code table used if other than universal genetic code table</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">variety</td>
+<td style="text-align: left;">variety (varietas, a formal Linnaean rank) of organism from which sample was derived</td>
+<td style="text-align: left;">text</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </section>
+<section id="campos-de-información-disponibles-en-la-tabla-de-resultados-de-tipo-coding" class="level2">
+<h2 class="anchored" data-anchor-id="campos-de-información-disponibles-en-la-tabla-de-resultados-de-tipo-coding">Campos de información disponibles en la tabla de resultados de tipo <em>coding</em></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>URL <span class="ot">&lt;-</span> <span class="st">&#39;https://www.ebi.ac.uk/ena/portal/api/returnFields?result=coding&#39;</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>CodingReturnFields <span class="ot">&lt;-</span> <span class="fu">read.table</span>(URL, <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">&#39;</span><span class="sc">\t</span><span class="st">&#39;</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(CodingReturnFields)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 71%">
+<col style="width: 12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">columnId</th>
+<th style="text-align: left;">description</th>
+<th style="text-align: left;">type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">accession</td>
+<td style="text-align: left;">accession number</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">allele</td>
+<td style="text-align: left;">name of the allele for the given gene</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">altitude</td>
+<td style="text-align: left;">Altitude (m)</td>
+<td style="text-align: left;">number</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artificial_location</td>
+<td style="text-align: left;">indicates location is modified to adjust for the presence of a frameshift or internal stop codon</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">base_count</td>
+<td style="text-align: left;">number of base pairs</td>
+<td style="text-align: left;">number</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">bio_material</td>
+<td style="text-align: left;">identifier for biological material including institute and collection code</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">cell_line</td>
+<td style="text-align: left;">cell line from which the sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">cell_type</td>
+<td style="text-align: left;">cell type from which the sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">codon_start</td>
+<td style="text-align: left;">indicates the offset of the first complete codon relative to the first base of the coding feature</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">collected_by</td>
+<td style="text-align: left;">name of the person who collected the specimen</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">collection_date</td>
+<td style="text-align: left;">Time when specimen was collected</td>
+<td style="text-align: left;">date</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">collection_date_end</td>
+<td style="text-align: left;">Time when specimen was collected</td>
+<td style="text-align: left;">date</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">collection_date_start</td>
+<td style="text-align: left;">Time when specimen was collected</td>
+<td style="text-align: left;">date</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">country</td>
+<td style="text-align: left;">locality of sample isolation: country names, oceans or seas, followed by regions and localities</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">cultivar</td>
+<td style="text-align: left;">cultivar (cultivated variety) of plant from which sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">culture_collection</td>
+<td style="text-align: left;">identifier for the sample culture including institute and collection code</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dataclass</td>
+<td style="text-align: left;">sequence data class</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">description</td>
+<td style="text-align: left;">brief sequence description</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dev_stage</td>
+<td style="text-align: left;">sample obtained from an organism in a specific developmental stage</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ec_number</td>
+<td style="text-align: left;">Enzyme Commission number for enzyme product of sequence</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ecotype</td>
+<td style="text-align: left;">a population within a given species displaying traits that reflect adaptation to a local habitat</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">environmental_sample</td>
+<td style="text-align: left;">identifies sequences derived by direct molecular isolation from an environmental DNA sample</td>
+<td style="text-align: left;">boolean</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">exception</td>
+<td style="text-align: left;">indicates that the coding region cannot be translated using standard biological rules</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">experiment</td>
+<td style="text-align: left;">a brief description of the nature of the experimental evidence</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">first_public</td>
+<td style="text-align: left;">date when made public</td>
+<td style="text-align: left;">date</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">function</td>
+<td style="text-align: left;">function attributed to a sequence</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">gene</td>
+<td style="text-align: left;">symbol of the gene corresponding to a sequence region</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">gene_synonym</td>
+<td style="text-align: left;">synonymous, replaced, obsolete or former gene symbol</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">germline</td>
+<td style="text-align: left;">the sample is an unrearranged molecule that was inherited from the parental germline</td>
+<td style="text-align: left;">boolean</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">haplotype</td>
+<td style="text-align: left;">combination of alleles that are linked together on the same physical chromosome</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">host</td>
+<td style="text-align: left;">natural (as opposed to laboratory) host to the organism from which sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">identified_by</td>
+<td style="text-align: left;">name of the taxonomist who identified the specimen</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">indexed_date</td>
+<td style="text-align: left;">date when record was indexed for presentation</td>
+<td style="text-align: left;">date</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">inference</td>
+<td style="text-align: left;">a structured description of non-experimental evidence</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">isolate</td>
+<td style="text-align: left;">individual isolate from which sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">isolation_source</td>
+<td style="text-align: left;">describes the physical, environmental and/or local geographical source of the sample</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">keywords</td>
+<td style="text-align: left;">keywords associated with sequence</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">lab_host</td>
+<td style="text-align: left;">scientific name of the laboratory host used to propagate the source organism for the sample</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">last_updated</td>
+<td style="text-align: left;">date when last updated</td>
+<td style="text-align: left;">date</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">location</td>
+<td style="text-align: left;">geographic location of isolation of the sample</td>
+<td style="text-align: left;">latlon</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">locus_tag</td>
+<td style="text-align: left;">a submitter-supplied, systematic, stable identifier for a gene and its associated features</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">map</td>
+<td style="text-align: left;">genomic map position of feature</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">marker</td>
+<td style="text-align: left;">marker classification</td>
+<td style="text-align: left;">indexed</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">mating_type</td>
+<td style="text-align: left;">mating type of the organism from which the sequence was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">mol_type</td>
+<td style="text-align: left;">in vivo molecule type of the sequence</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">old_locus_tag</td>
+<td style="text-align: left;">deprecated submitter-supplied, systematic, stable identifier for a gene and its associated features</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">operon</td>
+<td style="text-align: left;">name of the group of contiguous genes transcribed into a single transcript</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">organelle</td>
+<td style="text-align: left;">membrane-bound intracellular structure from which the sequence was obtained</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">parent_accession</td>
+<td style="text-align: left;">parent sequence accession number</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">plasmid</td>
+<td style="text-align: left;">name of naturally occurring plasmid from which the sequence was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">product</td>
+<td style="text-align: left;">name of the product associated with the feature</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">protein_id</td>
+<td style="text-align: left;">a stable protein identifier issued by INSDC</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">pseudo</td>
+<td style="text-align: left;">the feature is non-functional</td>
+<td style="text-align: left;">boolean</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">pseudo_gene</td>
+<td style="text-align: left;">indicates that this feature is a pseudogene</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ribosomal_slippage</td>
+<td style="text-align: left;">indicates ribosomal slippage (change to an alternative reading frame) during protein translation</td>
+<td style="text-align: left;">boolean</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sample_accession</td>
+<td style="text-align: left;">sample accession number</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">scientific_name</td>
+<td style="text-align: left;">scientific name of an organism</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sequence_md5</td>
+<td style="text-align: left;">MD5 checksum of sequence</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sequence_version</td>
+<td style="text-align: left;">Version of the sequence</td>
+<td style="text-align: left;">number</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">serotype</td>
+<td style="text-align: left;">serological variety of a species characterized by its antigenic properties</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">serovar</td>
+<td style="text-align: left;">serological variety of a species (usually a prokaryote) characterized by its antigenic properties</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sex</td>
+<td style="text-align: left;">sex of the organism from which the sample was obtained</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">specimen_voucher</td>
+<td style="text-align: left;">identifier for the sample culture including institute and collection code</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">standard_name</td>
+<td style="text-align: left;">accepted standard name for a feature</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">status</td>
+<td style="text-align: left;">Status</td>
+<td style="text-align: left;">number</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">strain</td>
+<td style="text-align: left;">strain from which sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">study_accession</td>
+<td style="text-align: left;">study accession number</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sub_species</td>
+<td style="text-align: left;">name of sub-species of organism from which sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sub_strain</td>
+<td style="text-align: left;">name or identifier of a genetically or otherwise modified strain from which sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">tag</td>
+<td style="text-align: left;">Classification Tags</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">tax_division</td>
+<td style="text-align: left;">taxonomic division</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">tax_id</td>
+<td style="text-align: left;">NCBI taxonomic classification</td>
+<td style="text-align: left;">taxonomy</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">tax_lineage</td>
+<td style="text-align: left;">Complete taxonomic lineage for an organism</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">tissue_lib</td>
+<td style="text-align: left;">tissue library from which sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">tissue_type</td>
+<td style="text-align: left;">tissue type from which the sample was obtained</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">topology</td>
+<td style="text-align: left;">sequence topology: circular or linear</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">trans_splicing</td>
+<td style="text-align: left;">indicates exons from two RNA molecules are ligated in intermolecular reaction to form mature RNA</td>
+<td style="text-align: left;">boolean</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">transl_except</td>
+<td style="text-align: left;">a single codon translation that does not conform to genetic code</td>
+<td style="text-align: left;">text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">transl_table</td>
+<td style="text-align: left;">indicates the genetic code table used if other than universal genetic code table</td>
+<td style="text-align: left;">controlled value</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">variety</td>
+<td style="text-align: left;">variety (varietas, a formal Linnaean rank) of organism from which sample was derived</td>
+<td style="text-align: left;">text</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="valores-possibles-en-el-campo-topology" class="level2">
+<h2 class="anchored" data-anchor-id="valores-possibles-en-el-campo-topology">Valores possibles en el campo <em>topology</em></h2>
+<p>Algunos campos filtrables son de tipo <em>controlled value</em>. Esto significa que sólo pueden adoptar unos pocos valores predeterminados. Para poder usar estos campos como filtro en nuestra búsqueda, debemos conocer qué valores acepta el campo. Lo podemos averiguar de la manera siguiente.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>URL <span class="ot">&lt;-</span> <span class="st">&#39;https://www.ebi.ac.uk/ena/portal/api/controlledVocab?field=topology&#39;</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>TopologyVocab <span class="ot">&lt;-</span> <span class="fu">read.table</span>(URL, <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">&#39;</span><span class="sc">\t</span><span class="st">&#39;</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(TopologyVocab)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">X.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">{value:CIRCULAR,description:}</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">,</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">{value:LINEAR,description:}</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">]</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Por tanto, podemos seleccionar secuencias codificantes de ADN circular con el filtro <code>query=topology=&quot;CIRCULAR&quot;</code>.</p>
+</section>
+</section>
+<section id="información-sobre-la-sesión" class="level1">
+<h1>Información sobre la sesión</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>R version 4.5.2 (2025-10-31)
+Platform: x86_64-pc-linux-gnu
+Running under: Ubuntu 22.04.5 LTS
+
+Matrix products: default
+BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0 
+LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0  LAPACK version 3.10.0
+
+locale:
+ [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+ [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+ [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+
+time zone: Europe/Madrid
+tzcode source: system (glibc)
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] knitr_1.51 curl_7.0.0
+
+loaded via a namespace (and not attached):
+ [1] digest_0.6.39     fastmap_1.2.0     xfun_0.56         glue_1.8.0       
+ [5] htmltools_0.5.9   rmarkdown_2.30    lifecycle_1.0.5   cli_3.6.5        
+ [9] vctrs_0.7.1       compiler_4.5.2    rstudioapi_0.18.0 tools_4.5.2      
+[13] evaluate_1.0.5    pillar_1.11.1     yaml_2.3.12       rlang_1.1.7      
+[17] jsonlite_2.0.0   </code></pre>
+</div>
+</div>
 </section>
 
-</main>
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Notas</h2>
+
+<ol>
+<li id="fn1"><p>API: <em>Application programming interface</em>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main>
 <!-- /main column -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -3305,12 +4293,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // flash "checked"
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
+    button.setAttribute("title", "Copiado");
     let tooltip;
     if (window.bootstrap) {
       button.setAttribute("data-bs-toggle", "tooltip");
       button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
+      button.setAttribute("data-bs-title", "Copiado");
       tooltip = new bootstrap.Tooltip(button, 
         { trigger: "manual", 
           customClass: "code-copy-button-tooltip",

@@ -129,7 +129,7 @@ dificultades identificas en cada uno.
 En el primer bloque, en comparación con el segundo, falta la función URLencode, que es la que nos permite desencriptar el enlace y descargar el archivo de texto. Lo que hace es darlo más mascadito que si copiasemos el enlace y lo pegásemos en el navegador, facilita la descarga.
 
 ```{r}
-curl_download('https://www.ebi.ac.uk/ena/portal/api/search?result=assembly&query=tax_tree(6157) AND genome_representation="full"&fields=version,tax_id,scientific_name,last_updated,base_count&limit=0',
+curl_download('https://www.ebi.ac.uk/ena/portal/api/search?result=assembly&query=tax_tree(6157)' AND 'genome_representation="full"&fields=version,tax_id,scientific_name,last_updated,base_count&limit=0',
               destfile = 'z1.txt')
 ```
 
@@ -216,7 +216,8 @@ un espacio en blanco, con la función `strsplit()`. Y por último usamos la func
 de componentes, `[`, y la opción "1", para seleccionar sólo el primero de los
 componentes en que habíamos dividido cada nombre científico.
 
-```{r SepararGenero}
+```{r} 
+#SepararGenero
 platelmintos$genus <- sapply(
    strsplit(platelmintos$scientific_name, ' '),
    '[',

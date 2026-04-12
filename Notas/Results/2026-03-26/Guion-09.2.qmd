@@ -1,7 +1,7 @@
 ---
 title: "Guion-09.2"
 format: html
-
+embed-resources: true
 ---
 
 ### Práctica 9.2
