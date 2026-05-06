@@ -6,6 +6,7 @@ execute:
   eval: true
   error: true
 engine: knitr
+bibliography: ../../Doc/references.bib
 language:
    title-block-published: "Última actualización:"
    section-title-references: "Bibliografía"
@@ -37,6 +38,9 @@ en Github.
 git config --global user.name "Nombre y apellidos"
 git config --global user.email "...@alumni.uv.es"
 ```
+
+En mi caso, el nombre de usuario escogido en lugar de mi nombre y apellidos ha sido "luispelu" (juega un poco con ellos).
+En cuanto al correo asociado, sí que he empleado el de la universidad, como se recomendaba.
 
 Es recomendable configurar `nano` como editor de texto usado para escribir los
 mensajes con los que etiquetamos las *instantáneas* o los *commits*. Se abre
@@ -109,6 +113,8 @@ Estas tres líneas indican:
 2. Ignora el contenido de la carpeta local `data`.
 3. Ignora todos los archivos que terminen en `.bam`. Observa el uso del
    asterisco, "*", como comodín: representa cualquier cadena de caracteres.
+   
+Por el momento, he creado e incluido este documento tal cual está indicado en el guión. La idea es, tal y como se nos ha explicado, ir haciendo uso de esta función e ir actualizando este documento con distintos archivos a ignorar.
    
 # Crear un repositorio en Github
 Tienes que haber creado una cuenta de usuario o ususaria. Github te guía en la

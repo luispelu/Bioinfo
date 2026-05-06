@@ -6,6 +6,7 @@ execute:
   output: true
   error: true
 engine: knitr
+bibliography: ../../Doc/references.bib
 language:
    title-block-published: "Última actualización:"
    section-title-references: "Bibliografía"
@@ -44,6 +45,9 @@ apt install emboss exonerate wget muscle
 | rm a      | Eliminar el *archivo* "a" |
 | rm -r a   | Eliminar el *directorio* "a" y su contenido |
 | touch a   | Crear el archivo vacío "a" o actualizar su fecha de consulta si ya existía |
+| ls        | Visualizar los archivos en la carpeta o directorio |
+| history   | Mostrar el historial de comandos de Bash |
+| nano      | Abrir archivos con el programa nano para visualizar su contenido |
 
 ::: {.callout-tip title="Consejo"}
 Amplía la tabla modificando el documento fuente.
@@ -77,6 +81,8 @@ Bash que has aprendido:
     └── 2026-05-05
 
 ```
+En mi caso, en la carpeta "Home" he creado la carpeta "Bioinfo", en la que iré incluyendo todo el trabajo que vaya llevando a cabo a lo largo de la asignatura. Dentro de esa carpeta, he creado dos nuevos directorios: uno que lleva por nombre "Trabajos", en el que pretendo añadir trabajos que haga fuera del aula, y otro al que he nombrado "Notas", en el que incluiré el trabajo realizado en clase. Dentro de esta última, he dividido los contenidos en "Data", carpeta en la que incluiré información más pesada; "Results", en la que iré añadiendo el trabajo de cada día; y "Doc", en la que, por el momento, he añadido el documento que incluye las referencias de este guión de prácticas. Para organizar mejor el trabajo, dentro de la carpeta "Results" añadiré al inicio de cada sesión una carpeta con la fecha del día, de forma que mi trabajo quede almacenado en orden cronológico y sea más sencillo su posterior seguimiento.
+
 :::
 
 # Alineamiento de pares de secuencia
@@ -136,6 +142,9 @@ fi
 1. Si al ejecutarlas aparece algún mensaje de error, léelo y corrige el error.
 2. Lee la ayuda del programa `needle` e intenta ajustar los parámetros
    para obtener un alineamiento más convincente.
+   
+   Para leer la ayuda de cualquier programa, en la consola introducimos lo siguiente: help()
+   
 3. Prueba el programa `water`, para que el alineamiento sea local.
 4. Intenta guardar el alineamiento en formato FASTA.
 5. Alinea también el tránscrito de SMARCD2 de chimpancé a su cromosoma.

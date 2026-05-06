@@ -1,10 +1,11 @@
 ---
-title: "Guion-09.2"
+title: "Reconstrucción filogenética parte 2"
+bibliography: ../../Doc/references.bib
 format: html
 embed-resources: true
 ---
 
-### Práctica 9.2
+# Práctica 9.2
 
 ## Introducción
 
@@ -76,9 +77,9 @@ El árbol es prácticamente idéntico, la ventaja que supongo que tiene esta fun
 
 La primera funciín sirve para añadir una barra horizontal que da la escala de las longitudes de las ramas, mientras que la segunda permite añadir un eje escalado en el lado de la representación.
 
-## Enraizar
+# Enraizar
 
-# Escogiendo el nodo
+## Escogiendo el nodo
 
 El árbol mt_nj no está enraizado (puedes comprobarlo con is.rooted()). Tenemos un par de opciones para enraizarlo. Una opción es root(), función en la que debemos especificar o bien el outgroup o bien el nodo interno en el que queremos situar la raíz. Para saber cómo identificar los nodos internos, puedes invocar nodelabels() después de haber usado plot(mt_nj). Por ejemplo, en mi caso, el nodo 75 parece ser el ancestro entre gorilas y chimpancés, y por tanto también es ancestro de los humanos. Por tanto:
 
@@ -88,7 +89,7 @@ mt_nj_rooted <- root(mt_nj, node = 75)
 plot(mt_nj_rooted)
 ```
 
-# Con un *outgroup*
+## Con un *outgroup*
 
 La numeración de los nodos internos siempre sigue a la de las hojas (o puntas) del árbol. El orden es caprichoso y después de enraizar, lo que era el 75 en mt_nj ahora será el 43 en mt_nj_rooted. Para garantizar que el enraizado no depende de la numeración, es más seguro usar el nombre del 'outgroup':
 
@@ -99,7 +100,7 @@ mt_nj_rooted2 <- root(mt_nj, outgroup = 'G.gorilla_D38114')
 plot(mt_nj_rooted2)
 ```
 
-# En el punto medio
+## En el punto medio
 
 Al representar el árbol enraizado (plot(mt_nj_rooted)) verás que no todas las hojas del árbol están a la misma altura. El punto exacto en el que se sitúa la raíz en una rama es arbitrario y root() no se esfuerza mucho en intentar que el árbol parezca ultramétrico. La otra opción es la función midpoint(), que escoge la posición de la raíz para que el árbol esté más equilibrado:
 
@@ -114,7 +115,7 @@ add.scale.bar()
 
 Como vemos, en este momento en el que no habíamos añadido las fechas, en la representación vemos incongruencias, como que los denisovanos en algunas ramas acumulan más cambios que los humanos modernos.
 
-# Con datación de hojas
+## Con datación de hojas
 
 El enraizado en punto medio asume que todas las hojas son contemporáneas, como sucede en muchos casos. Pero, en nuestros datos tenemos secuencias contemporáneas y también arcaicas. En el apéndice encontrarás referencias sobre las edades estimadas de esas secuencias. Conociendo estas edades, podemos aplicar un método de enraizado llamado root-to-tip regression, mediante la función rtt() de ape.
 
@@ -154,7 +155,7 @@ Las de los denisovanos.
 - ¿Qué razones puede haber para que la edad de una secuencia no se corresponda con la cantidad de cambios que ha acumulado?
 Los motivos que hemos mencionado en la primera pregunta.
 
-## Distancias
+# Distancias
 
 Si has creado el objeto distancias antes, puedes usarlo para conocer la cantidad estimada de cambios entre los cromosomas mitocondriales humanos y de neandertales, por ejemplo. El objeto de clase dist es incómodo, pero podemos obtener una simple matriz fácilmente:
 

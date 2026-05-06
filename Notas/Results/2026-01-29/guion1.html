@@ -53,7 +53,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}</style>
 
 
 <script>/*!
@@ -3098,7 +3118,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Última actualización:</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">7 de abril de 2026</p>
+      <p class="date">6 de mayo de 2026</p>
     </div>
   </div>
   
@@ -3112,7 +3132,7 @@ vertical-align: -.125em;
 
 <section id="preparación" class="level1">
 <h1>Preparación</h1>
-<p>Hacen falta los programas <code>needle</code> y <code>water</code> de <a href="http://emboss.open-bio.org/">EMBOS</a>, el programa <a href="https://www.animalgenome.org/bioinfo/resources/manuals/exonerate/index.html"><code>exonerate</code></a> <span class="citation" data-cites="Slater2005">[@Slater2005]</span>, y el programa <a href="https://www.drive5.com/muscle5/"><code>muscle</code></a><span class="citation" data-cites="Edgar2022">[@Edgar2022]</span>. Para la descarga automática de secuencias usaremos el programa <code>wget</code>. En sistemas operativos basados en Debian, seguramente se pueden instalar los cinco programas así (con privilegios administrativos):</p>
+<p>Hacen falta los programas <code>needle</code> y <code>water</code> de <a href="http://emboss.open-bio.org/">EMBOS</a>, el programa <a href="https://www.animalgenome.org/bioinfo/resources/manuals/exonerate/index.html"><code>exonerate</code></a> <span class="citation" data-cites="Slater2005">(<a href="#ref-Slater2005" role="doc-biblioref">Slater y Birney 2025</a>)</span>, y el programa <a href="https://www.drive5.com/muscle5/"><code>muscle</code></a><span class="citation" data-cites="Edgar2022">(<a href="#ref-Edgar2022" role="doc-biblioref">Edgar 2022</a>)</span>. Para la descarga automática de secuencias usaremos el programa <code>wget</code>. En sistemas operativos basados en Debian, seguramente se pueden instalar los cinco programas así (con privilegios administrativos):</p>
 <pre><code>apt install emboss exonerate wget muscle</code></pre>
 </section>
 <section id="objetivos" class="level1">
@@ -3173,6 +3193,18 @@ vertical-align: -.125em;
 <td>touch a</td>
 <td style="text-align: left;">Crear el archivo vacío “a” o actualizar su fecha de consulta si ya existía</td>
 </tr>
+<tr class="even">
+<td>ls</td>
+<td style="text-align: left;">Visualizar los archivos en la carpeta o directorio</td>
+</tr>
+<tr class="odd">
+<td>history</td>
+<td style="text-align: left;">Mostrar el historial de comandos de Bash</td>
+</tr>
+<tr class="even">
+<td>nano</td>
+<td style="text-align: left;">Abrir archivos con el programa nano para visualizar su contenido</td>
+</tr>
 </tbody>
 </table>
 <div class="callout callout-style-default callout-tip callout-titled" title="Consejo">
@@ -3217,6 +3249,7 @@ Ejercicio 1
     ├── 2026-04-28
     └── 2026-05-05
 </code></pre>
+<p>En mi caso, en la carpeta “Home” he creado la carpeta “Bioinfo”, en la que iré incluyendo todo el trabajo que vaya llevando a cabo a lo largo de la asignatura. Dentro de esa carpeta, he creado dos nuevos directorios: uno que lleva por nombre “Trabajos”, en el que pretendo añadir trabajos que haga fuera del aula, y otro al que he nombrado “Notas”, en el que incluiré el trabajo realizado en clase. Dentro de esta última, he dividido los contenidos en “Data”, carpeta en la que incluiré información más pesada; “Results”, en la que iré añadiendo el trabajo de cada día; y “Doc”, en la que, por el momento, he añadido el documento que incluye las referencias de este guión de prácticas. Para organizar mejor el trabajo, dentro de la carpeta “Results” añadiré al inicio de cada sesión una carpeta con la fecha del día, de forma que mi trabajo quede almacenado en orden cronológico y sea más sencillo su posterior seguimiento.</p>
 </div>
 </div>
 </section>
@@ -3265,17 +3298,18 @@ Desafíos
 </div>
 <div class="callout-body-container callout-body">
 <ol start="0" type="1">
-<li>Lee detenidamente las órdenes y los comentarios y asegúrate de entenderlos.</li>
-<li>Si al ejecutarlas aparece algún mensaje de error, léelo y corrige el error.</li>
-<li>Lee la ayuda del programa <code>needle</code> e intenta ajustar los parámetros para obtener un alineamiento más convincente.</li>
-<li>Prueba el programa <code>water</code>, para que el alineamiento sea local.</li>
-<li>Intenta guardar el alineamiento en formato FASTA.</li>
-<li>Alinea también el tránscrito de SMARCD2 de chimpancé a su cromosoma.</li>
-<li>Alinea también los dos fragmentos cromosómicos.</li>
+<li><p>Lee detenidamente las órdenes y los comentarios y asegúrate de entenderlos.</p></li>
+<li><p>Si al ejecutarlas aparece algún mensaje de error, léelo y corrige el error.</p></li>
+<li><p>Lee la ayuda del programa <code>needle</code> e intenta ajustar los parámetros para obtener un alineamiento más convincente.</p>
+<p>Para leer la ayuda de cualquier programa, en la consola introducimos lo siguiente: help()</p></li>
+<li><p>Prueba el programa <code>water</code>, para que el alineamiento sea local.</p></li>
+<li><p>Intenta guardar el alineamiento en formato FASTA.</p></li>
+<li><p>Alinea también el tránscrito de SMARCD2 de chimpancé a su cromosoma.</p></li>
+<li><p>Alinea también los dos fragmentos cromosómicos.</p></li>
 </ol>
 </div>
 </div>
-<p>Para alinear tránscritos o incluso proteínas a un genoma de referencia, es mejor usar el programa <code>exonerate</code> <span class="citation" data-cites="Slater2005">[@Slater2005]</span>, que puede aplicar los parámetros más adecuados para este tipo de tarea. Puedes leer la documentación de <code>exonerate</code> mediante las órdenes <code>man exonerate</code> o <code>exonerate --help</code>. También existe <a href="https://www.animalgenome.org/bioinfo/resources/manuals/exonerate/index.html">documentación online sobre este programa</a>. En el bloque siguiente repetimos el mismo alineamiento que antes, con <code>exonerate</code>.</p>
+<p>Para alinear tránscritos o incluso proteínas a un genoma de referencia, es mejor usar el programa <code>exonerate</code> <span class="citation" data-cites="Slater2005">(<a href="#ref-Slater2005" role="doc-biblioref">Slater y Birney 2025</a>)</span>, que puede aplicar los parámetros más adecuados para este tipo de tarea. Puedes leer la documentación de <code>exonerate</code> mediante las órdenes <code>man exonerate</code> o <code>exonerate --help</code>. También existe <a href="https://www.animalgenome.org/bioinfo/resources/manuals/exonerate/index.html">documentación online sobre este programa</a>. En el bloque siguiente repetimos el mismo alineamiento que antes, con <code>exonerate</code>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">!</span> <span class="ot">-e</span> HumanSMARCD2.fa <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">wget</span> <span class="at">-O</span> HumanSMARCD2.fa https://www.ebi.ac.uk/ena/browser/api/fasta/AAI36323.1</span>
@@ -3286,29 +3320,7 @@ Desafíos
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="ex">exonerate</span> <span class="at">--model</span> est2genome HumanSMARCD2.fa HumanChr17.fa</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>--2026-04-07 10:46:54--  https://www.ebi.ac.uk/ena/browser/api/fasta/AAI36323.1
-Resolving www.ebi.ac.uk (www.ebi.ac.uk)... 193.62.193.80
-Connecting to www.ebi.ac.uk (www.ebi.ac.uk)|193.62.193.80|:443... connected.
-HTTP request sent, awaiting response... 200 
-Length: unspecified [text/plain]
-Saving to: ‘HumanSMARCD2.fa’
-
-     0K .                                                      91.4M=0s
-
-2026-04-07 10:46:54 (91.4 MB/s) - ‘HumanSMARCD2.fa’ saved [1572]
-
---2026-04-07 10:46:54--  https://rest.ensembl.org/sequence/region/human/17:63832000..63843000:1?content-type=text/x-fasta
-Resolving rest.ensembl.org (rest.ensembl.org)... 193.62.193.83
-Connecting to rest.ensembl.org (rest.ensembl.org)|193.62.193.83|:443... connected.
-HTTP request sent, awaiting response... 200 OK
-Length: 11227 (11K) [text/x-fasta]
-Saving to: ‘HumanChr17.fa’
-
-     0K ..........                                            100% 39.6M=0s
-
-2026-04-07 10:46:55 (39.6 MB/s) - ‘HumanChr17.fa’ saved [11227/11227]
-
-Command line: [exonerate --model est2genome HumanSMARCD2.fa HumanChr17.fa]
+<pre><code>Command line: [exonerate --model est2genome HumanSMARCD2.fa HumanChr17.fa]
 Hostname: [Mason]
 
 C4 Alignment:
@@ -3469,7 +3481,7 @@ Desafío
 </section>
 <section id="apéndice.-alineamientos-múltiples" class="level1">
 <h1>Apéndice. Alineamientos múltiples</h1>
-<p>Un programa muy popular para alineamiento de múltiples secuencias es <a href="https://drive5.com/muscle/"><code>muscle</code></a> <span class="citation" data-cites="Edgar2022">[@Edgar2022]</span>. Suponiendo que está instalado, vamos a probarlo con una colección de secuencias que pertenecen a la familia <a href="https://www.ebi.ac.uk/interpro/entry/pfam/PF00009/">PF00009</a>:</p>
+<p>Un programa muy popular para alineamiento de múltiples secuencias es <a href="https://drive5.com/muscle/"><code>muscle</code></a> <span class="citation" data-cites="Edgar2022">(<a href="#ref-Edgar2022" role="doc-biblioref">Edgar 2022</a>)</span>. Suponiendo que está instalado, vamos a probarlo con una colección de secuencias que pertenecen a la familia <a href="https://www.ebi.ac.uk/interpro/entry/pfam/PF00009/">PF00009</a>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">!</span> <span class="ot">-e</span> PF00009.fa <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">wget</span> <span class="at">-O</span> PF00009.fa https://raw.githubusercontent.com/rcedgar/balifam/refs/heads/main/balifam100/in/PF00009.100</span>
@@ -3479,18 +3491,7 @@ Desafío
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>   <span class="ex">muscle</span> <span class="at">-align</span> PF00009.fa <span class="at">-output</span> PF00009.afa</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>--2026-04-07 10:46:55--  https://raw.githubusercontent.com/rcedgar/balifam/refs/heads/main/balifam100/in/PF00009.100
-Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.109.133, 185.199.111.133, 185.199.110.133, ...
-Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.109.133|:443... connected.
-HTTP request sent, awaiting response... 200 OK
-Length: 32012 (31K) [text/plain]
-Saving to: ‘PF00009.fa’
-
-     0K .......... .......... .......... .                    100% 12.3M=0.002s
-
-2026-04-07 10:46:56 (12.3 MB/s) - ‘PF00009.fa’ saved [32012/32012]
-
-Invalid command line option &quot;align&quot;
+<pre><code>Invalid command line option &quot;align&quot;
 
 MUSCLE v3.8.1551 by Robert C. Edgar
 
@@ -3548,11 +3549,19 @@ Fastest possible (nucleotides): -maxiters 1 -diags</code></pre>
 </div>
 </div>
 </section>
-<section id="bibliografía" class="level1">
-<h1>Bibliografía</h1>
+<section id="bibliografía" class="level1 unnumbered">
+
+
 </section>
 
-</main>
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">Bibliografía</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-Edgar2022" class="csl-entry" role="listitem">
+Edgar, R. C. 2022. <span>«Muscle5: High-accuracy alignment ensembles enable unbiased assessments of sequence homology and phylogeny»</span>. <em>Nature Communications</em> 13: 6968. <a href="https://doi.org/10.1038/s41467-022-34630-w">https://doi.org/10.1038/s41467-022-34630-w</a>.
+</div>
+<div id="ref-Slater2005" class="csl-entry" role="listitem">
+Slater, G. S. C., y E. Birney. 2025. <span>«Automated generation of heuristics for biological sequence comparison»</span>. <em>BMC Bioinformatics</em> 6: 31. <a href="https://doi.org/10.1186/1471-2105-6-31">https://doi.org/10.1186/1471-2105-6-31</a>.
+</div>
+</div></section></div></main>
 <!-- /main column -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {

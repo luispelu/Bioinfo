@@ -6,7 +6,7 @@ execute:
   output: true
   error: true
 engine: knitr
-bibliography: ../../Notas/Doc/references.bib
+bibliography: ../../Doc/references.bib
 language:
    title-block-published: "Última actualización:"
    section-title-references: "Bibliografía"
@@ -42,7 +42,7 @@ if [ ! -e  trypanosoma_annotated.txt ]; then
 fi
 ```
 
-Le estamos diciendo que está anotado y el formato en el que está (json)
+Le estamos diciendo que está anotado y el formato en el que está (json).
 
 La línea larga que sigue a `--fields` especifica qué información sobre los genomas
 queremos ver en la tabla. Para saber qué campos se pueden seleccionar, puedes
@@ -65,8 +65,8 @@ Ninguna, son idénticas, me lo ha desvelado tu siguiente pregunta (soy muy sabio
 
 2. Busca una función de R que te permita identificar las líneas repetidas en un
    marco de datos.
-   esta función se llama duplicated
-   en verdad en verdad no son idénticas, no soy tan sabio. la línea 7 es GCF y la 
+   Esta función se llama duplicated
+   En realidad no son idénticas, no soy tan sabio. La línea 7 es GCF y la 
    8 es GCA
 :::
 

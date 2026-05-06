@@ -3,6 +3,7 @@ title: "guion-11"
 author: "Luis Pérez Lucena"
 format: html
 engine: knitr
+bibliography: ../../Doc/references.bib
 ---
 
 # Práctica 11. Anotación

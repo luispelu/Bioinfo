@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Guion-09.2</title>
+<title>Reconstrucción filogenética parte 2</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3226,7 +3226,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Guion-09.2</h1>
+<h1 class="title">Reconstrucción filogenética parte 2</h1>
 </div>
 
 
@@ -3243,9 +3243,8 @@ window.Quarto = {
 </header>
 
 
-<section id="práctica-9.2" class="level3">
-<h3 class="anchored" data-anchor-id="práctica-9.2">Práctica 9.2</h3>
-</section>
+<section id="práctica-9.2" class="level1">
+<h1>Práctica 9.2</h1>
 <section id="introducción" class="level2">
 <h2 class="anchored" data-anchor-id="introducción">Introducción</h2>
 <p>Aunque existen muy buenos programas para inferir filogenias fuera del entorno de R (es decir, para el terminal de Bash), utilizar las herramientas en R tiene la ventaja de poder representar los árboles, manipularlos y extraer información de ellos con toda la flexibilidad que permite un lenguaje de programación. Otros programas como RAxML o IQtree producirían los resultados en forma de archivos de texto con formato Newick o NEXUS. En R, los árboles serán objetos de clase phylo, que pueden también ser exportados como archivos de texto con formato Newick con la función write.tree() del paquete ape. Este paquete será cargado automáticamente cuando carguemos el paquete phangorn, que proporciona las principales funciones para inferencia filogenética.</p>
@@ -3320,11 +3319,11 @@ window.Quarto = {
 </ul>
 <p>La primera funciín sirve para añadir una barra horizontal que da la escala de las longitudes de las ramas, mientras que la segunda permite añadir un eje escalado en el lado de la representación.</p>
 </section>
-<section id="enraizar" class="level2">
-<h2 class="anchored" data-anchor-id="enraizar">Enraizar</h2>
 </section>
-<section id="escogiendo-el-nodo" class="level1">
-<h1>Escogiendo el nodo</h1>
+<section id="enraizar" class="level1">
+<h1>Enraizar</h1>
+<section id="escogiendo-el-nodo" class="level2">
+<h2 class="anchored" data-anchor-id="escogiendo-el-nodo">Escogiendo el nodo</h2>
 <p>El árbol mt_nj no está enraizado (puedes comprobarlo con is.rooted()). Tenemos un par de opciones para enraizarlo. Una opción es root(), función en la que debemos especificar o bien el outgroup o bien el nodo interno en el que queremos situar la raíz. Para saber cómo identificar los nodos internos, puedes invocar nodelabels() después de haber usado plot(mt_nj). Por ejemplo, en mi caso, el nodo 75 parece ser el ancestro entre gorilas y chimpancés, y por tanto también es ancestro de los humanos. Por tanto:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mt_nj_rooted <span class="ot">&lt;-</span> <span class="fu">root</span>(mt_nj, <span class="at">node =</span> <span class="dv">75</span>)</span>
@@ -3338,8 +3337,8 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="con-un-outgroup" class="level1">
-<h1>Con un <em>outgroup</em></h1>
+<section id="con-un-outgroup" class="level2">
+<h2 class="anchored" data-anchor-id="con-un-outgroup">Con un <em>outgroup</em></h2>
 <p>La numeración de los nodos internos siempre sigue a la de las hojas (o puntas) del árbol. El orden es caprichoso y después de enraizar, lo que era el 75 en mt_nj ahora será el 43 en mt_nj_rooted. Para garantizar que el enraizado no depende de la numeración, es más seguro usar el nombre del ‘outgroup’:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Debería dar el mismo resultado:</span></span>
@@ -3354,8 +3353,8 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="en-el-punto-medio" class="level1">
-<h1>En el punto medio</h1>
+<section id="en-el-punto-medio" class="level2">
+<h2 class="anchored" data-anchor-id="en-el-punto-medio">En el punto medio</h2>
 <p>Al representar el árbol enraizado (plot(mt_nj_rooted)) verás que no todas las hojas del árbol están a la misma altura. El punto exacto en el que se sitúa la raíz en una rama es arbitrario y root() no se esfuerza mucho en intentar que el árbol parezca ultramétrico. La otra opción es la función midpoint(), que escoge la posición de la raíz para que el árbol esté más equilibrado:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Esto sobreescribe el objeto anterior:</span></span>
@@ -3373,8 +3372,8 @@ window.Quarto = {
 </div>
 <p>Como vemos, en este momento en el que no habíamos añadido las fechas, en la representación vemos incongruencias, como que los denisovanos en algunas ramas acumulan más cambios que los humanos modernos.</p>
 </section>
-<section id="con-datación-de-hojas" class="level1">
-<h1>Con datación de hojas</h1>
+<section id="con-datación-de-hojas" class="level2">
+<h2 class="anchored" data-anchor-id="con-datación-de-hojas">Con datación de hojas</h2>
 <p>El enraizado en punto medio asume que todas las hojas son contemporáneas, como sucede en muchos casos. Pero, en nuestros datos tenemos secuencias contemporáneas y también arcaicas. En el apéndice encontrarás referencias sobre las edades estimadas de esas secuencias. Conociendo estas edades, podemos aplicar un método de enraizado llamado root-to-tip regression, mediante la función rtt() de ape.</p>
 <p>Lo primero es crear un vector de fechas (o edades) para todas las hojas del árbol. Podemos expressar las edades de las secuencias arcaicas como el número (negativo) de años que hace que dejaron de evolucionar. Para saber el orden en que debemos especificar las edades, podemos usar mt_nj$tip.label.</p>
 <div class="cell">
@@ -3452,8 +3451,10 @@ window.Quarto = {
 <li><p>¿Qué secuencias crees que se ajustan menos a su supuesta edad? Las de los denisovanos.</p></li>
 <li><p>¿Qué razones puede haber para que la edad de una secuencia no se corresponda con la cantidad de cambios que ha acumulado? Los motivos que hemos mencionado en la primera pregunta.</p></li>
 </ul>
-<section id="distancias" class="level2">
-<h2 class="anchored" data-anchor-id="distancias">Distancias</h2>
+</section>
+</section>
+<section id="distancias" class="level1">
+<h1>Distancias</h1>
 <p>Si has creado el objeto distancias antes, puedes usarlo para conocer la cantidad estimada de cambios entre los cromosomas mitocondriales humanos y de neandertales, por ejemplo. El objeto de clase dist es incómodo, pero podemos obtener una simple matriz fácilmente:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>distMat <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(distancias)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -3563,7 +3564,6 @@ window.Quarto = {
 </div>
 </div>
 <p>De la representación deducimos como ambas distancias son prácticamente idénticas.</p>
-</section>
 <section id="limpieza-o-filtrado-del-alineamiento" class="level2">
 <h2 class="anchored" data-anchor-id="limpieza-o-filtrado-del-alineamiento">Limpieza o filtrado del alineamiento</h2>
 <p>Las distancias crudas, como número de diferencias, nos pueden informar de la presencia de pares de secuencias idénticas. Podríamos dejarlas, pero algunos de los métodos que usaremos a continuación pueden generar errores, por ejemplo cuando dos secuencias idénticas se supone que pertenecen a épocas diferentes.</p>

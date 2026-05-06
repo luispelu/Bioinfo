@@ -6,6 +6,7 @@ execute:
   output: true
   error: true
 engine: knitr
+bibliography: ../../Doc/references.bib
 language:
    title-block-published: "Última actualización:"
    section-title-references: "Bibliografía"
@@ -240,7 +241,7 @@ segundo. Por ejemplo, al comparar estas 2 URLs:
 - https://www.ebi.ac.uk/interpro/api/protein
 - https://www.ebi.ac.uk/interpro/api/protein/entry
 
-podemos observar que no en todas las proteínas en UniProtKB se encuentra algún
+Podemos observar que no en todas las proteínas en UniProtKB se encuentra algún
 dominio o elemento funcional en InterPro.
 
 :::{.callout-note icon=false}

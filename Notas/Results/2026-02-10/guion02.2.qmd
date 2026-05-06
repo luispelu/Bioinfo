@@ -6,6 +6,7 @@ execute:
   output: true
   error: true
 engine: knitr
+bibliography: ../../Doc/references.bib
 language:
    title-block-published: "Última actualización:"
    section-title-references: "Bibliografía"
@@ -91,8 +92,16 @@ fi
 :::{.callout-note icon=false}
 ## Preguntas
 - ¿Crees que deberíamos guardar los archivos descargados en `../../data`?
+
+A mi parecer sí, puesto que se trata de archivos de un tamaño considerable, que pueden interferir en caso de ser añadidos al repositorio.
+
 - ¿Cómo podrías guardar los mensajes de `wget` en un archivo?
-- ¿De cuántas secuencias diferentes se compone este genoma de referencia? de 3, lo he hecho con grep ">" referencia.fa. con grep "^>" le indicamos el principio de la linea. con eso representamos una expresión regular, que es una serie de caracteres que tienen cosas en común
+
+Lo hemos hecho al añadir el "-o" tras el wget.
+
+- ¿De cuántas secuencias diferentes se compone este genoma de referencia? 
+
+Se compone de 3, lo he hecho con grep ">" referencia.fa. Con grep "^>" le indicamos el principio de la linea, puesto que sabemos que las secuencias de nucleótidos en este tipo de archivos comienzan con ese signo. Con eso representamos una expresión regular, que es una serie de caracteres que tienen cosas en común
 :::
 
 # Control de calidad

@@ -69,6 +69,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="guion-10_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="guion-10_files/libs/bootstrap/bootstrap-304fe4f2fd0cf4d188a1af30a884b8f8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -231,37 +260,32 @@ make: Nothing to be done for 'all'.</code></pre>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://github.com/huangnengCSU/compleasm/releases/download/v0.2.7/compleasm-0.2.7_x64-linux.tar.bz2</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> <span class="at">-jxvf</span> compleasm-0.2.7_x64-linux.tar.bz2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>--2026-04-16 18:35:54--  https://github.com/huangnengCSU/compleasm/releases/download/v0.2.7/compleasm-0.2.7_x64-linux.tar.bz2
+<pre><code>--2026-05-06 20:58:06--  https://github.com/huangnengCSU/compleasm/releases/download/v0.2.7/compleasm-0.2.7_x64-linux.tar.bz2
 Resolving github.com (github.com)... 140.82.121.4
 Connecting to github.com (github.com)|140.82.121.4|:443... connected.
-HTTP request sent, awaiting response... No data received.
-Retrying.
-
---2026-04-16 18:35:57--  (try: 2)  https://github.com/huangnengCSU/compleasm/releases/download/v0.2.7/compleasm-0.2.7_x64-linux.tar.bz2
-Connecting to github.com (github.com)|140.82.121.4|:443... connected.
 HTTP request sent, awaiting response... 302 Found
-Location: https://release-assets.githubusercontent.com/github-production-release-asset/623513670/a0e13780-f367-449e-aa19-488061de234c?sp=r&amp;sv=2018-11-09&amp;sr=b&amp;spr=https&amp;se=2026-04-16T17%3A30%3A33Z&amp;rscd=attachment%3B+filename%3Dcompleasm-0.2.7_x64-linux.tar.bz2&amp;rsct=application%2Foctet-stream&amp;skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&amp;sktid=398a6654-997b-47e9-b12b-9515b896b4de&amp;skt=2026-04-16T16%3A29%3A55Z&amp;ske=2026-04-16T17%3A30%3A33Z&amp;sks=b&amp;skv=2018-11-09&amp;sig=d4CMYloQ6CW2F1MaEQtd2C9TNKw3RdajDyfKLeYjXh0%3D&amp;jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc3NjM1NzY1NywibmJmIjoxNzc2MzU3MzU3LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.pBapw7PXItmQE0_DlLteoBTfqK0hQypq4rw1KpCzo3Q&amp;response-content-disposition=attachment%3B%20filename%3Dcompleasm-0.2.7_x64-linux.tar.bz2&amp;response-content-type=application%2Foctet-stream [following]
---2026-04-16 18:35:58--  https://release-assets.githubusercontent.com/github-production-release-asset/623513670/a0e13780-f367-449e-aa19-488061de234c?sp=r&amp;sv=2018-11-09&amp;sr=b&amp;spr=https&amp;se=2026-04-16T17%3A30%3A33Z&amp;rscd=attachment%3B+filename%3Dcompleasm-0.2.7_x64-linux.tar.bz2&amp;rsct=application%2Foctet-stream&amp;skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&amp;sktid=398a6654-997b-47e9-b12b-9515b896b4de&amp;skt=2026-04-16T16%3A29%3A55Z&amp;ske=2026-04-16T17%3A30%3A33Z&amp;sks=b&amp;skv=2018-11-09&amp;sig=d4CMYloQ6CW2F1MaEQtd2C9TNKw3RdajDyfKLeYjXh0%3D&amp;jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc3NjM1NzY1NywibmJmIjoxNzc2MzU3MzU3LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.pBapw7PXItmQE0_DlLteoBTfqK0hQypq4rw1KpCzo3Q&amp;response-content-disposition=attachment%3B%20filename%3Dcompleasm-0.2.7_x64-linux.tar.bz2&amp;response-content-type=application%2Foctet-stream
-Resolving release-assets.githubusercontent.com (release-assets.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...
+Location: https://release-assets.githubusercontent.com/github-production-release-asset/623513670/a0e13780-f367-449e-aa19-488061de234c?sp=r&amp;sv=2018-11-09&amp;sr=b&amp;spr=https&amp;se=2026-05-06T19%3A36%3A22Z&amp;rscd=attachment%3B+filename%3Dcompleasm-0.2.7_x64-linux.tar.bz2&amp;rsct=application%2Foctet-stream&amp;skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&amp;sktid=398a6654-997b-47e9-b12b-9515b896b4de&amp;skt=2026-05-06T18%3A36%3A18Z&amp;ske=2026-05-06T19%3A36%3A22Z&amp;sks=b&amp;skv=2018-11-09&amp;sig=9oFXukch6K%2FdowJYiATOIIDzYoQ3pqWFfjwoI4%2Bolb4%3D&amp;jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc3ODA5NDE4OCwibmJmIjoxNzc4MDkzODg4LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.sfbcHcKqmv4m9R0buXO9LnyNPDMj46cAe5-X5kDnpSw&amp;response-content-disposition=attachment%3B%20filename%3Dcompleasm-0.2.7_x64-linux.tar.bz2&amp;response-content-type=application%2Foctet-stream [following]
+--2026-05-06 20:58:07--  https://release-assets.githubusercontent.com/github-production-release-asset/623513670/a0e13780-f367-449e-aa19-488061de234c?sp=r&amp;sv=2018-11-09&amp;sr=b&amp;spr=https&amp;se=2026-05-06T19%3A36%3A22Z&amp;rscd=attachment%3B+filename%3Dcompleasm-0.2.7_x64-linux.tar.bz2&amp;rsct=application%2Foctet-stream&amp;skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&amp;sktid=398a6654-997b-47e9-b12b-9515b896b4de&amp;skt=2026-05-06T18%3A36%3A18Z&amp;ske=2026-05-06T19%3A36%3A22Z&amp;sks=b&amp;skv=2018-11-09&amp;sig=9oFXukch6K%2FdowJYiATOIIDzYoQ3pqWFfjwoI4%2Bolb4%3D&amp;jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc3ODA5NDE4OCwibmJmIjoxNzc4MDkzODg4LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.sfbcHcKqmv4m9R0buXO9LnyNPDMj46cAe5-X5kDnpSw&amp;response-content-disposition=attachment%3B%20filename%3Dcompleasm-0.2.7_x64-linux.tar.bz2&amp;response-content-type=application%2Foctet-stream
+Resolving release-assets.githubusercontent.com (release-assets.githubusercontent.com)... 185.199.108.133, 185.199.111.133, 185.199.110.133, ...
 Connecting to release-assets.githubusercontent.com (release-assets.githubusercontent.com)|185.199.108.133|:443... connected.
 HTTP request sent, awaiting response... 200 OK
 Length: 608513 (594K) [application/octet-stream]
-Saving to: ‘compleasm-0.2.7_x64-linux.tar.bz2.2’
+Saving to: ‘compleasm-0.2.7_x64-linux.tar.bz2.3’
 
-     0K .......... .......... .......... .......... ..........  8% 3.92M 0s
-    50K .......... .......... .......... .......... .......... 16% 2.52M 0s
-   100K .......... .......... .......... .......... .......... 25% 14.2M 0s
-   150K .......... .......... .......... .......... .......... 33% 22.7M 0s
-   200K .......... .......... .......... .......... .......... 42% 4.61M 0s
-   250K .......... .......... .......... .......... .......... 50% 20.2M 0s
-   300K .......... .......... .......... .......... .......... 58% 9.74M 0s
-   350K .......... .......... .......... .......... .......... 67% 82.1M 0s
-   400K .......... .......... .......... .......... .......... 75% 52.1M 0s
-   450K .......... .......... .......... .......... .......... 84% 7.96M 0s
-   500K .......... .......... .......... .......... .......... 92% 15.0M 0s
-   550K .......... .......... .......... .......... ....      100% 75.7M=0.07s
+     0K .......... .......... .......... .......... ..........  8% 2.14M 0s
+    50K .......... .......... .......... .......... .......... 16% 1.75M 0s
+   100K .......... .......... .......... .......... .......... 25% 3.86M 0s
+   150K .......... .......... .......... .......... .......... 33% 1.13M 0s
+   200K .......... .......... .......... .......... .......... 42% 2.61M 0s
+   250K .......... .......... .......... .......... .......... 50% 4.23M 0s
+   300K .......... .......... .......... .......... .......... 58% 7.82M 0s
+   350K .......... .......... .......... .......... .......... 67% 6.20M 0s
+   400K .......... .......... .......... .......... .......... 75% 3.61M 0s
+   450K .......... .......... .......... .......... .......... 84% 4.66M 0s
+   500K .......... .......... .......... .......... .......... 92% 6.79M 0s
+   550K .......... .......... .......... .......... ....      100% 8.61M=0.2s
 
-2026-04-16 18:35:58 (8.67 MB/s) - ‘compleasm-0.2.7_x64-linux.tar.bz2.2’ saved [608513/608513]
+2026-05-06 20:58:07 (3.10 MB/s) - ‘compleasm-0.2.7_x64-linux.tar.bz2.3’ saved [608513/608513]
 
 compleasm_kit/
 compleasm_kit/LICENSE
@@ -282,6 +306,8 @@ compleasm_kit/LICENSE-BUSCO</code></pre>
 <h1>Visualización del grafo</h1>
 <p>Desafortunadamente, no existe todavía ningún paquete de R para visualizar ensamblajes como grafos de fragmentos a partir de archivos .gfa. Uno de los visualizadores más populares es bandage, una aplicación gráfica que puede instalarse fácilmente en cualquier sistema operativo, pero que no ofrece interfaz por línea de comandos.</p>
 <p><strong>Ejercicio 5</strong> Instala bandage, carga el grafo del ensamblaje realizado y genera una figura. Puedes añadir la figura al informe HTML mediante la sitaxis siguiente:</p>
+<p>library(Biostrings) asm1 &lt;- readDNAStringSet(‘asm1/At4.fa’) asm1.len &lt;- data.frame( len = sort(width(asm1), decreasing = TRUE) ) asm1.len<span class="math inline">\(cumlen &lt;- cumsum(asm1.len\)</span>len) asm1.len<span class="math inline">\(cumprop &lt;- asm1.len\)</span>cumlen / sum(asm1.len$len) asm1.len</p>
+<p>Ejecutando esto, podríamos saber las longitudes acumuladas.</p>
 </section>
 
 </main>

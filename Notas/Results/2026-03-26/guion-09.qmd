@@ -1,5 +1,6 @@
 ---
-title: "guion-09"
+title: "Reconstrucción filogenética"
+bibliography: ../../Doc/references.bib
 format: 
   html: 
     embed-resources: true
@@ -64,7 +65,7 @@ plot(mt_upgma)
 axisPhylo()
 ```
 
-No podemos utilizar este modelo (TIM2+G(4)+I) porque no está implementado en esta función. Pasamos a emplear el que estaba por defecto, TN93 (parece que el que nos salía como mejor es importante para obtener el árbol de máxima verosimilitud, con este para calcular distancias con este nos vale)
+No podemos utilizar este modelo (TIM2+G(4)+I) porque no está implementado en esta función. Pasamos a emplear el que estaba por defecto, TN93 (parece que el que nos salía como mejor es importante para obtener el árbol de máxima verosimilitud, con este para calcular distancias con este nos vale).
 
 **Nota**
 Cuando la función plot() se aplica a un objeto de clase phylo, en realidad se ejecuta la función plot.phylo(). Si quieres explorar las opciones de representación gráfica de árboles con plot(), consulta help(plot.phylo).

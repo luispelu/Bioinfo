@@ -53,7 +53,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}</style>
 
 
 <script>/*!
@@ -3098,7 +3118,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Última actualización:</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">3 de marzo de 2026</p>
+      <p class="date">6 de mayo de 2026</p>
     </div>
   </div>
   
@@ -3123,11 +3143,11 @@ vertical-align: -.125em;
 </section>
 <section id="introducción" class="level1">
 <h1>Introducción</h1>
-<p>Todas las consultas a InterPro <span class="citation" data-cites="Paysan-Lafosse2022">[@Paysan-Lafosse2022]</span> deben empezar con la dirección de la API: <code>https://www.ebi.ac.uk/interpro/api/</code> <span class="citation" data-cites="interproAPI">[@interproAPI]</span>. Por tanto, guardo esta URL básica como cadena de caracteres en la variable <code>API</code>:</p>
+<p>Todas las consultas a InterPro <span class="citation" data-cites="Paysan-Lafosse2022">(<a href="#ref-Paysan-Lafosse2022" role="doc-biblioref">Paysan-Lafosse et al. 2022</a>)</span> deben empezar con la dirección de la API: <code>https://www.ebi.ac.uk/interpro/api/</code> <span class="citation" data-cites="interproAPI">(<a href="#ref-interproAPI" role="doc-biblioref">Proteins Web Team 2023</a>)</span>. Por tanto, guardo esta URL básica como cadena de caracteres en la variable <code>API</code>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>API <span class="ot">&lt;-</span> <span class="st">&#39;https://www.ebi.ac.uk/interpro/api/&#39;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>La API devuelve los datos en un formato llamado JSON, basado en texto plano. Necesitamos un paquete que nos ayude a leer los archivos JSON. Por ejemplo, <code>jsonlite</code> <span class="citation" data-cites="jsonlite">[@jsonlite]</span>:</p>
+<p>La API devuelve los datos en un formato llamado JSON, basado en texto plano. Necesitamos un paquete que nos ayude a leer los archivos JSON. Por ejemplo, <code>jsonlite</code> <span class="citation" data-cites="jsonlite">(<a href="#ref-jsonlite" role="doc-biblioref">Ooms 2014</a>)</span>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&#39;jsonlite&#39;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -3710,7 +3730,7 @@ Ejercicio 3
 <li>https://www.ebi.ac.uk/interpro/api/protein</li>
 <li>https://www.ebi.ac.uk/interpro/api/protein/entry</li>
 </ul>
-<p>podemos observar que no en todas las proteínas en UniProtKB se encuentra algún dominio o elemento funcional en InterPro.</p>
+<p>Podemos observar que no en todas las proteínas en UniProtKB se encuentra algún dominio o elemento funcional en InterPro.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -4036,9 +4056,20 @@ loaded via a namespace (and not attached):
 [17] rlang_1.1.7      </code></pre>
 </div>
 </div>
+
 </section>
 
-</main>
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">Bibliografía</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-jsonlite" class="csl-entry" role="listitem">
+Ooms, Jeroen. 2014. <span>«The jsonlite Package: A Practical and Consistent Mapping Between JSON Data and R Objects»</span>. arXiv. <a href="https://doi.org/10.48550/ARXIV.1403.2805">https://doi.org/10.48550/ARXIV.1403.2805</a>.
+</div>
+<div id="ref-Paysan-Lafosse2022" class="csl-entry" role="listitem">
+Paysan-Lafosse, Typhaine, Matthias Blum, Sara Chuguransky, Tiago Grego, Beatriz Lázaro Pinto, Gustavo A Salazar, Maxwell L Bileschi, et al. 2022. <span>«<span>InterPro in 2022</span>»</span>. <em>Nucleic Acids Research</em> 51 (D1): D418-27. <a href="https://doi.org/10.1093/nar/gkac993">https://doi.org/10.1093/nar/gkac993</a>.
+</div>
+<div id="ref-interproAPI" class="csl-entry" role="listitem">
+Proteins Web Team. 2023. <a href="https://github.com/ProteinsWebTeam/interpro7-api/tree/master/docs">https://github.com/ProteinsWebTeam/interpro7-api/tree/master/docs</a>.
+</div>
+</div></section></div></main>
 <!-- /main column -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {

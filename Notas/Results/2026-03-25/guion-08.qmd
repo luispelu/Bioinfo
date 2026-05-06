@@ -1,10 +1,11 @@
 ---
-title: "guion-08"
+title: "BLAST"
+bibliography: ../../Doc/references.bib
 format: html
 embed-resources: true
 ---
 
-## Objetivos
+# Objetivos
 
 BLAST ejecuta alineamientos locales entre una secuencia “problema” o query, generalmente no muy larga, y un conjunto grande de secuencias (la base de datos) entre las que esperamos encontrar alguna secuencia homóloga a la query. Cada secuencia de la base de datos que pueda alinearse con la query se la llama subject en el alineamiento. Los objetivos de esta práctica son:
 
@@ -66,7 +67,7 @@ if [ ! -e ../../Data/blochmannia.paa ]; then
 fi
 ```
 
-# Realizar las búsquedas de BLASTP
+## Realizar las búsquedas de BLASTP
 
 El objetivo es encontrar la proteína de Blochmannia ocreatus que más se parece a cada una de las proteínas de Buchnera aphidicola, y viceversa. Entonces, seleccionaremos las parejas de proteínas que sean recíprocamente las más similares una de otra, por ser más probablemente ortólogas. Otras relaciones de semejanza no recíprocas pueden ser debidas a la paralogía.
 

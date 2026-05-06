@@ -3,6 +3,7 @@ title: "guion-12"
 author: "Luis Pérez Lucena"
 format: html
 editor: visual
+bibliography: ../../Doc/references.bib
 ---
 
 # Práctica 12. Análisis de expresión diferencial
@@ -23,17 +24,15 @@ genex <- read.table('../../Data/salmon.merged.gene_counts.tsv',
                     header = TRUE)
 ```
 
-**Ejercicio 1**
-Recuerda dejar constancia en un bloque de código de cómo obtienes las respuestas.
+**Ejercicio 1** Recuerda dejar constancia en un bloque de código de cómo obtienes las respuestas.
 
-- Usa la función paste() para añadir una columna a muestras que contenga la población y la temperatura unidas por _.
+-   Usa la función paste() para añadir una columna a muestras que contenga la población y la temperatura unidas por \_.
 
 ```{r}
 muestras <- cbind(muestras, Pop_temp = paste(muestras$population, muestras$temp, sep = "_"))
 ```
 
-
-- ¿Cuál es el número total de lecturas por muestra?
+-   ¿Cuál es el número total de lecturas por muestra?
 
 ```{r}
 sum(genex$SRR1576457)
@@ -50,7 +49,7 @@ sum(genex$SRR1576515)
 sum(genex$SRR1576516)
 ```
 
-- ¿Los recuentos tienen distribuciones parecidas entre muestras?
+-   ¿Los recuentos tienen distribuciones parecidas entre muestras?
 
 ```{r}
 f <- rowSums(genex[,-c(1,2)])>0
@@ -67,14 +66,14 @@ lines(density(genex[f ,12]))
 lines(density(genex[f ,13]))
 lines(density(genex[f ,14]))
 ```
+
 ```{r}
 summary(genex)
 ```
 
-
 Las distribuciones de las lecturas entre las distintas muestras son bastante similares entre sí, no hay ninguna línea que se vaya mucho del resto.
 
-- ¿Cuántos genes no se expresan en absoluto en ninguna de las muestras?
+-   ¿Cuántos genes no se expresan en absoluto en ninguna de las muestras?
 
 ```{r}
 # Cuenta cuántos genes tienen una suma total de cero en todas las columnas. Como las dos primeras columnas no son numéricas, las tenemos que quitar (-c(1,2)), si no la función no va a saber sumar.
@@ -129,8 +128,7 @@ dds1 <- DESeqDataSetFromMatrix(
 dds1
 ```
 
-**Nota**
-Los objetos DESeqDataSet pueden contener información sobre las coordenadas cromosómicas de los genes o tránscritos, si se construyen a partir de otro tipo de datos.
+**Nota** Los objetos DESeqDataSet pueden contener información sobre las coordenadas cromosómicas de los genes o tránscritos, si se construyen a partir de otro tipo de datos.
 
 ## Pre-filtrado
 
@@ -158,8 +156,7 @@ Esto es para cada gen, cada fila es un gen. Tenemos el nivel basal, y a continua
 
 Por defecto, la función results() produce la tabla de resultados para el contraste entre el nivel último y el de referencia del último factor en la tabla que describe las muestras. En este caso, el factor es temp, el nivel de referencia es low y el otro nivel es high. Por tanto, los valores de log2FoldChange representan el logaritmo en base 2 de la relación entre niveles de expresión en muestras high respecto de muestras low.
 
-**Ejercicio 3**
-- Mira la ayuda de results() y genera también la tabla de resultados para el contraste entre las dos regiones de procedencia de las moscas.
+**Ejercicio 3** - Mira la ayuda de results() y genera también la tabla de resultados para el contraste entre las dos regiones de procedencia de las moscas.
 
 ```{r}
 res2 <- results(dds1, contrast=c("population", "maine", "panama"))
@@ -168,7 +165,7 @@ res2
 
 En este caso, como estamos comparando los datos de Maine con respecto a los de Panamá, si el cambio de expresión es positivo, los niveles son mayores en los datos de Maine.
 
-- Usa summary() sobre los resultados para ver el número de genes diferencialmente expresados entre cada par de condiciones.
+-   Usa summary() sobre los resultados para ver el número de genes diferencialmente expresados entre cada par de condiciones.
 
 ```{r}
 summary(res)
@@ -182,7 +179,7 @@ summary(res2)
 
 Al comparar en función del cambio de la población, hay 634 genes sobreexpresados tras el cambio de Maine a Panamá, y 623 genes subexpresados.
 
-- ¿Cuál es la tasa de falsos positivos (FDR)?
+-   ¿Cuál es la tasa de falsos positivos (FDR)?
 
 ```{r}
 sum(res$padj < 0.1, na.rm = TRUE)
@@ -204,4 +201,3 @@ resShrink <- lfcShrink(dds1, coef = 'temp_high_vs_low',
                        type = 'normal')
 plotMA(resShrink)
 ```
-

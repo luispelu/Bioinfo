@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>guion-08</title>
+<title>BLAST</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3087,7 +3087,7 @@ vertical-align: -.125em;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">guion-08</h1>
+<h1 class="title">BLAST</h1>
 </div>
 
 
@@ -3104,8 +3104,8 @@ vertical-align: -.125em;
 </header>
 
 
-<section id="objetivos" class="level2">
-<h2 class="anchored" data-anchor-id="objetivos">Objetivos</h2>
+<section id="objetivos" class="level1">
+<h1>Objetivos</h1>
 <p>BLAST ejecuta alineamientos locales entre una secuencia “problema” o query, generalmente no muy larga, y un conjunto grande de secuencias (la base de datos) entre las que esperamos encontrar alguna secuencia homóloga a la query. Cada secuencia de la base de datos que pueda alinearse con la query se la llama subject en el alineamiento. Los objetivos de esta práctica son:</p>
 <ol type="1">
 <li>Identificar proteínas ortólogas entre dos especies con BLASTP.</li>
@@ -3113,7 +3113,6 @@ vertical-align: -.125em;
 <li>Determinar el origen de las lecturas que no pudieron ser mapeadas a su genoma de referencia, usando BLASTN remoto.</li>
 </ol>
 <p>-Mirar guión aula virtual para ver como descargar los datos empleados en la práctica (los tenemos en la carpeta “Data”).-</p>
-</section>
 <section id="ejercicio-1.-identificación-aproximada-de-ortólogos" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicio-1.-identificación-aproximada-de-ortólogos">Ejercicio 1. Identificación aproximada de ortólogos</h2>
 <p>Una estrategia habitual para identificar genes ortólogos es comprobar si cada uno es, respecto del otro, su mejor resultado de BLAST. Lo que en inglés llaman reciprocal best hits. Aunque se trata de un método heurístico, los resultados son bastante fiables. Vamos a practicarlo entre dos proteomas que debes haber descargado, y que primero debemos enmascarar e indexar para BLAST.</p>
@@ -3163,8 +3162,8 @@ vertical-align: -.125em;
 </div>
 </section>
 </section>
-<section id="realizar-las-búsquedas-de-blastp" class="level1">
-<h1>Realizar las búsquedas de BLASTP</h1>
+<section id="realizar-las-búsquedas-de-blastp" class="level2">
+<h2 class="anchored" data-anchor-id="realizar-las-búsquedas-de-blastp">Realizar las búsquedas de BLASTP</h2>
 <p>El objetivo es encontrar la proteína de Blochmannia ocreatus que más se parece a cada una de las proteínas de Buchnera aphidicola, y viceversa. Entonces, seleccionaremos las parejas de proteínas que sean recíprocamente las más similares una de otra, por ser más probablemente ortólogas. Otras relaciones de semejanza no recíprocas pueden ser debidas a la paralogía.</p>
 <p><strong>De Buchnera aphidicola hacia Blochmannia ocreatus</strong></p>
 <div class="cell">
@@ -3218,6 +3217,7 @@ vertical-align: -.125em;
 <p>Lo que hemos hecho al ejecutar este código es representar las coincidencias entre ambos archivos, es decir, las entradas de ambos en las que la query de uno es el subject del otro, y viceversa. Hemos cogido la comparación de la primera especie con la segunda, la de la segunda con la primera, y las hemos combinado en este archivo llamado “coincidencias” (en el environment).</p>
 <p>-¿Qué datos te gustaría representar gráficamente para ganar confianza en que los resultados son correctos y tienen sentido?</p>
 <p>Podríamos representar los valores E, esperamos que si las secuencias son similares sean bajos. Otra opción es ver el tamaño de los gaps, comparando la longitud de las secuencias indidivuales (qlen, slen) con la del apareamiento (length) (si los apareamientos son buenos, su tamaño debería ser menor o igual al de las secuencias individuales)</p>
+</section>
 <section id="ejercicio-2.-psi-blast" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicio-2.-psi-blast">Ejercicio 2. PSI-BLAST</h2>
 <p>El PSI-BLAST nos permite identificar semejanzas sutiles, como las que existen entre miembros alejados de una superfamilia proteica. Para comprobarlo vamos a realizar una búsqueda a partir de cualquiera de las proteínas siguientes: Q9CC91, P39615, B1AJI8, P47343, Q5UPT2, Q6UDG6, A1AFY9, O59825 y P30314. Todas ellas están en Swissprot y pertenecen a una misma superfamilia. Sin embargo, un simple BLASTP con cualquiera de ellas no encuentra ninguna de las otras. Comprobemos si con un PSI-BLAST lo conseguimos. A continuación lo intento a partir de P39615. Repite los pasos usando otra proteína de la lista como query y compara los resultados.</p>
